@@ -22,7 +22,8 @@ GENOBJS_COV = $(GENOBJS:%.o=%_cov.o)
 CFLAGS_LOCAL = $(FO_CFLAGS) -Werror
 CFLAGS_LOCALO = $(FO_CFLAGS)
 
-all: encode nomos libnomos.a
+all: 
+	./encode nomos libnomos.a
 
 coverage: encode nomos_cov libnomos_cov.a
 
