@@ -15,7 +15,9 @@
         "symfony/http-foundation": "2.6.*",
         "symfony/dependency-injection": "2.6.*",
         "twig/twig": "1.*",
-        "twig/extensions": "1.*"
+        "twig/extensions": "1.*",
+        "aws/aws-sdk-php": "3.*",
+        "ulrichsg/getopt-php": "2.3.*"
     },
 
     "require-dev": {

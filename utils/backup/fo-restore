@@ -210,4 +210,3 @@ if [ $FOSTART ]; then
       echo "FOSSology scheduler start successful!"
    fi
 fi
-

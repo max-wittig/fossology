@@ -137,3 +137,4 @@ variable.list
 /src/cli/fo_ninka_license_list
 /install/scripts/php.ini
 /install/scripts/php.ini.orig
+/src/composer.phar
