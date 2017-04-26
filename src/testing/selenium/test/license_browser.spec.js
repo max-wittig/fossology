@@ -29,7 +29,7 @@ describe('License Upload Tests', function ()
         uploadSettings.agentSettings = new AgentSettings(true, true, true, true, true, true);
         uploadSettings.licenseDeciderSettings = new LicenseDeciderSettings(true, true, true);
         test_helper.uploadFile(uploadSettings);
-        browser.sleep(5000);
+        browser.sleep(10000);
         test_helper.openBrowseBugWorkAround();
     }
 
