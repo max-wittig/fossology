@@ -42,7 +42,7 @@ describe('License Upload Tests', function ()
         let smallA = element(by.cssContainingText("small a", tabName));
         test_helper.waitForElementToBePresent(smallA);
         smallA.click();
-        browser.sleep(5000);
+        browser.sleep(3000);
     }
 
     it("License Upload File Browser Test", function ()
@@ -77,6 +77,7 @@ describe('License Upload Tests', function ()
     it("File Information Test", function ()
     {
         openLicenseBrowseTab("Info");
+        browser.sleep(300);
         expect(element(by.cssContainingText("td", "application/x-7z-compressed")).isPresent()).toBe(true);
     });
 
