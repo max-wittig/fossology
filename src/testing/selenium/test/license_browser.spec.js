@@ -39,7 +39,7 @@ describe('License Upload Tests', function ()
         let browseTabLink = element(by.cssContainingText("a",globalUploadSettings.uploadName));
         test_helper.waitForElementToBePresent(browseTabLink);
         browseTabLink.click();
-        let smallA = element(by.cssContainingText("small a", tabName));
+        let smallA = element(by.cssContainingText("small", tabName));
         test_helper.waitForElementToBePresent(smallA);
         smallA.click();
         browser.sleep(3000);
