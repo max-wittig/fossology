@@ -8,10 +8,6 @@ let AgentSettings = require("./helper/AgentSettings");
 let test_helper = require("./helper/test_helper");
 let UploadSettings = require("./helper/Upload/UploadSettings");
 
-/*
-Template file for creating new test cases
- */
-
 describe('License Upload Tests', function ()
 {
     let globalUploadSettings = null;
