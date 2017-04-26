@@ -9,7 +9,7 @@ sudo apt install curl
 
 #### download images from dockerhub
 #docker pull fossology/fossology:latest
-docker pull selenium/standalone-chrome
+docker pull selenium/standalone-chrome:3.3.0
 
 #### remove old container, if any
 fossology_running=`docker ps --all | grep fossology-test | wc -l`

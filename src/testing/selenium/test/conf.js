@@ -9,7 +9,8 @@ exports.config =
 {
     framework: 'jasmine',
     seleniumAddress: seleniumRemoteAddress,
-    specs: ["upload.spec.js", "user.spec.js",
+    specs:
+        ["upload.spec.js", "user.spec.js",
         "group.spec.js", "search.spec.js",
         "customize.spec.js", "tag.spec.js",
         "license_upload.spec.js", "license_browser.spec.js",
