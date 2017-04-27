@@ -52,9 +52,9 @@ env:
    - if [[ -z "$PHPTESTSUITE" ]]; then exit 0; fi
    - MAKETARGETS='all test-lib'
   matrix:
-   - PHPTESTSUITE= CHECKBEFORE='src/testing/selenium/travis_start.sh' MAKETARGETS=''
-   - PHPTESTSUITE= CHECKBEFORE='src/testing/docker/default-docker-test.sh' MAKETARGETS=''
-   - PHPTESTSUITE= CHECKBEFORE='src/testing/docker/docker-compose-test.sh' MAKETARGETS=''
+   - PHPTESTSUITE='' CHECKBEFORE='src/testing/selenium/travis_start.sh' MAKETARGETS=''
+   - PHPTESTSUITE='' CHECKBEFORE='src/testing/docker/default-docker-test.sh' MAKETARGETS=''
+   - PHPTESTSUITE='' CHECKBEFORE='src/testing/docker/docker-compose-test.sh' MAKETARGETS=''
    - CC=gcc CXX=g++ MAKETARGETS='all test-lib test-monk test-nomos'
    - CC=clang-3.6 CXX=clang++-3.6 MAKETARGETS='all test-lib test-monk test-nomos'
    - CC=gcc-4.6 CXX=g++-4.6 MAKETARGETS='all test-lib test-monk test-nomos'
