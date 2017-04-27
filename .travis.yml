@@ -94,7 +94,6 @@ script:
  - make $MAKETARGETS
  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.5" ]]; then composer require --dev --no-update phpunit/phpunit ~4; fi
  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ]]; then composer require --no-update phpunit/phpunit ~5; fi
- - echo ${PHPTESTSUITE};
  - if [[ -n ${PHPTESTSUITE} ]]; then phpunit -csrc/phpunit.xml --testsuite="$PHPTESTSUITE"; fi
  - set +e
 
