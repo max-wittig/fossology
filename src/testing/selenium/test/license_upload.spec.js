@@ -66,7 +66,9 @@ describe('License Upload Tests', function ()
             'restriction, including without limitation the rights to use, copy, modify, merge, publish, ' +
             'distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom';
         element(by.name("bulkRefText")).sendKeys(textToPaste);
-        element(by.cssContainingText("button", "Schedule Bulk scan")).click();
+        let button = element(by.cssContainingText("button", "Schedule Bulk scan"));
+        test_helper.waitForElementToBePresent(button);
+        button.click();
         browser.sleep(200);
         expect(element(by.name("bulkIdResult")).getText()).toContain("scan scheduled as job #");
         test_helper.deleteFile(uploadSettings.uploadName);
