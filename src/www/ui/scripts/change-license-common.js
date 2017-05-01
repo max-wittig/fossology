@@ -110,8 +110,15 @@ function scheduledDeciderError (responseobject, resultEntity) {
 }
 
 function scheduleBulkScanCommon(resultEntity, callbackSuccess) {
+  var bulkActions = getBulkFormTableContent();
+  if(bulkActions.length < 1)
+  {
+    alert("No licenses to bulk scan selected");
+    return;
+  }
+  
   var post_data = {
-    "bulkAction": getBulkFormTableContent(),
+    "bulkAction": bulkActions,
     "refText": $('#bulkRefText').val(),
     "bulkScope": $('#bulkScope').val(),
     "uploadTreeId": $('#uploadTreeId').val(),
