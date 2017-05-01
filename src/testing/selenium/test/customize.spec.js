@@ -9,7 +9,7 @@ describe('Admin Customize Tests', function ()
 {
     beforeAll(function ()
     {
-        jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = 200000;
         test_helper.login();
     });
 
