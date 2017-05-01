@@ -41,7 +41,8 @@ docker build -t fossology/fossology ../../../
 
 #### create new container
 docker create -p 8081:8081 --name fossology-test --net fossology-testnet --ip 172.18.0.22 fossology/fossology
-docker create -p 4444:4444 --name selenium-test --net fossology-testnet --ip 172.18.0.23 selenium/standalone-chrome:3.3.0
+# DBUS_SESSION_BUS_ADDRESS is needed, because https://github.com/SeleniumHQ/docker-selenium/issues/87
+docker create -e DBUS_SESSION_BUS_ADDRESS=/dev/null -p 4444:4444 --name selenium-test --net fossology-testnet --ip 172.18.0.23 selenium/standalone-chrome:3.3.0
 
 #### run container
 docker start fossology-test
