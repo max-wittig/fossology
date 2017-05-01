@@ -13,6 +13,7 @@ describe('License Upload Tests', function ()
 {
     beforeAll(function ()
     {
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
         test_helper.login();
     });
 
