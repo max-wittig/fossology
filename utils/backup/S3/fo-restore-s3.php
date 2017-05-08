@@ -52,22 +52,22 @@ function controlFossology($state)
 
 function restoreRepo($repoName)
 {
-    shell_exec("unzip $repoName");
+    exec("unzip $repoName");
     unlink($repoName);
 }
 
 function restoreDatabase($filename)
 {
-    shell_exec("service postgresql restart");
-    shell_exec("su postgres -c 'dropdb fossology'");
-    shell_exec("su postgres -c 'psql -f $filename'");
+    exec("service postgresql restart");
+    exec("su postgres -c 'dropdb fossology'");
+    exec("su postgres -c 'psql -f $filename'");
     unlink($filename);
 }
 
 function cleanFossologyRepo()
 {
-    shell_exec("rm -rf /srv/fossology/repository/");
-    shell_exec("/usr/local/lib/fossology/fo-postinstall");
+    exec("rm -rf /srv/fossology/repository/");
+    exec("/usr/local/lib/fossology/fo-postinstall");
 }
 
 $getopt = new Getopt((array(
@@ -118,7 +118,7 @@ $fullPath = $destinationDir . $backupFilename;
 if(!file_exists($fullPath))
     exit("Can't restore. File doesn't exist.");
 
-shell_exec("unzip " . $fullPath);
+exec("unzip " . $fullPath);
 
 restoreRepo($repoName);
 restoreDatabase($databaseName);

@@ -33,22 +33,22 @@ class BackupHelper
     {
         $currentFolder = getcwd();
         chdir($sourceFolder);
-        echoln("Repo zip name" . $this->rootZipFilePath . "/" . $this->repoFilename);
+        echoln("Repo zip name " . $this->rootZipFilePath . "/" . $this->repoFilename);
         echoln("Packing repo. This may take a while...");
-        shell_exec("zip -r --display-dots $this->rootZipFilePath/$this->repoFilename *");
+        exec("zip -r --display-dots $this->rootZipFilePath/$this->repoFilename *");
         echoln("Zip file: $this->repoFilename created");
         chdir($currentFolder);
     }
 
     function createDatabaseZip()
     {
-        shell_exec("su postgres -c 'pg_dumpall' > $this->rootZipFilePath/$this->databaseFilename");
+        exec("su postgres -c 'pg_dumpall' > $this->rootZipFilePath/$this->databaseFilename");
     }
 
     function createRootZip()
     {
         chdir($this->rootZipFilePath);
-        shell_exec("zip -r $this->rootZipFilePath/$this->rootZipFileName *");
+        exec("zip -r --display-dots $this->rootZipFilePath/$this->rootZipFileName *");
     }
 
     /**
