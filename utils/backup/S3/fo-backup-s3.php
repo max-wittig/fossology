@@ -35,7 +35,7 @@ Required Parameter:
 -u --username Aws Username
 -p --password Aws Password
 -d --dir Backupdir -> directory where to create backup files
--bu --bucket Bucketname -> Name of the Amazon S3 Bucket
+-b --bucket Bucketname -> Name of the Amazon S3 Bucket
 
 Optional Parameter
 -e S3 Endpoint -> e.g http://localhost:4572 for local testing of S3
