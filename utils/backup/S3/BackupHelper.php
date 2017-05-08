@@ -18,7 +18,6 @@ class BackupHelper
         $this->rootZipFileName = $currentDate . ".zip";
         //backupDir == where backup folder will be created
         $this->backupDir = $backupDir;
-        echoln($backupDir);
         $this->createBackupFolder();
     }
 

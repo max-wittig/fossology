@@ -97,7 +97,7 @@ $backupHelper->createRepoZip($sourceDir);
 $backupHelper->createDatabaseZip();
 $backupHelper->createRootZip();
 
-createBucket($s3, $bucket);
+//createBucket($s3, $bucket);
 $rootZipFullPath = $backupHelper->getRootZipFilePath()."/".$backupHelper->getRootZipFileName();
 
 echoln("Creating a new object with key {$rootZipFullPath}");
