@@ -1,0 +1,171 @@
+
+swagger: '2.0'
+info:
+  title: FOSSology API
+  description: Automate your fossology instance using this API
+  version: "1.0.0"
+# the domain of the service
+host: localhost
+# array of all schemes that your API supports
+schemes:
+  - https
+# will be prefixed to all paths
+basePath: /v1
+securityDefinitions:
+  UserSecurity:
+    type: apiKey
+    in: header
+    name: SIMPLE-API-KEY
+security:
+  - UserSecurity: []
+
+produces:
+  - application/json
+paths:
+  /organize/uploads/{id}:
+    get:
+      tags:
+        - Upload
+        - Organize
+      summary: Get single upload by id
+      description:
+        Returns an array with single upload
+      parameters:
+        - name: id
+          required: true
+          description: Id of the upload
+          in: path
+          type: number
+          format: int
+      responses:
+        200:
+          description: Get upload
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Upload'
+        400:
+          description: Bad request, id NaN etc.
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized, no authentification provided
+          schema:
+            $ref: '#/definitions/Error'
+        403:
+          description: Forbidden, no access to upload
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Not found
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      tags:
+        - Upload
+        - Organize
+      summary: Delete upload by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: number
+          format: int
+      responses:
+        202:
+          description: Upload will be deleted
+    patch:
+      tags:
+        - Upload
+        - Organize
+      parameters:
+        - name: id
+          description: uploadid
+          in: path
+          required: true
+          type: number
+        - name: folder_id
+          description: folder, where upload is located
+          in: header
+          required: false
+          type: string
+      responses:
+        202:
+          description: Upload will be moved
+    put:
+      tags:
+        - Upload
+        - Organize
+      description: Can be used to copy uploads
+      parameters:
+        - name: id
+          description: uploadid
+          in: path
+          required: true
+          type: number
+      responses:
+        202:
+          description: Upload will be copied
+
+  /organize/uploads:
+    get:
+      tags:
+        - Upload
+      summary: Uploads
+      description: |
+        The uploads endpoint returns all uploads
+      responses:
+        200:
+          description: An array of uploads
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Upload'
+        401:
+          description: Unauthorized, no authentification provided
+          schema:
+            $ref: '#/definitions/Error'
+        403:
+          description: Forbidden, no access to upload
+          schema:
+            $ref: '#/definitions/Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+definitions:
+  Upload:
+    type: object
+    properties:
+      in_folder_id:
+        type: number
+        format: int
+        description: The folder id, where the upload is located
+      upload_id:
+        type: number
+        format: int
+        description: Upload id of the upload.
+      description:
+        type: string
+        description: Description of the upload.
+      upload_name:
+        type: string
+        description: Display name of the upload.
+      upload_date:
+        type: string
+        description: Date, when the file was uploaded.
+      file_size:
+        type: number
+        description: Filesize in Bytes.
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
+
