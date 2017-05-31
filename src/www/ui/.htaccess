@@ -1,0 +1,4 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^api/(.*) http://127.0.0.1/repo/api/api.php
+</IfModule>
