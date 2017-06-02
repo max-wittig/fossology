@@ -82,7 +82,7 @@ class admin_upload_delete extends FO_Plugin
    *
    * \return NULL on success, string on failure.
    */
-  function Delete($uploadpk, $Depends = NULL) 
+  public function Delete($uploadpk, $Depends = NULL)
   {
     /* Prepare the job: job "Delete" */
     $user_pk = Auth::getUserId();
