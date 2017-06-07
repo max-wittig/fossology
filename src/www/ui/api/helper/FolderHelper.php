@@ -24,6 +24,7 @@ class FolderHelper
 {
   private $folderDao;
   private $dbManager;
+  private $PG_CONN;
 
   /**
    * FolderHelper constructor.
@@ -36,25 +37,32 @@ class FolderHelper
     $logger = new Logger(__FILE__);
     $logger->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, $logLevel));
     $this->dbManager = new SolidDbManager($logger);
-    $PG_CONN = pg_connect("host=localhost port=5432 dbname=fossology user=fossy password=fossy")
+    $this->PG_CONN = pg_connect("host=localhost port=5432 dbname=fossology user=fossy password=fossy")
     or die("Could not connect");
-    $pgDriver = new Postgres($PG_CONN);
+    $pgDriver = new Postgres($this->PG_CONN);
     $this->dbManager->setDriver($pgDriver);
-
-    //$this->folderDao = $container->get('dao.folder');
   }
 
-  public function getUploads($id = NULL)
+  public function getUploads($userId, $uploadId = NULL)
   {
-    if($id == NULL)
+    if($uploadId == NULL)
     {
-      $res = $this->dbManager->getSingleRow("SELECT array_agg(ufile_name) FROM uploadtree");
+      $sql = "SELECT upload_pk, upload_ts, upload_filename FROM upload WHERE user_fk=".pg_escape_string($userId);
     }
     else
     {
-      $res = $this->dbManager->getSingleRow("SELECT array_agg(ufile_name) FROM uploadtree WHERE upload_fk=$1",array($id));
+      $sql = "SELECT upload_pk, upload_ts,upload_filename FROM upload WHERE upload_pk=".pg_escape_string($uploadId) . "AND user_fk=".pg_escape_string($userId);
     }
-    return $res["array_agg"];
+
+    $result = pg_query($this->PG_CONN, $sql);
+    //DBCheckResult($result, $sql, __FILE__, __LINE__);
+    $uploads = [];
+    while ($row = pg_fetch_assoc($result))
+    {
+      array_push($uploads, $row);
+    }
+    pg_free_result($result);
+    return $uploads;
   }
 
   /**

@@ -4,24 +4,41 @@ require_once '/usr/local/share/fossology/vendor/autoload.php';
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
-include_once "helper/helper.php";
+include_once "helper/rest-helper.php";
 include_once "models/Error.php";
-$app = new Silex\Application();
-use api\models\Error;
 include_once "helper/FolderHelper.php";
-use www\ui\api\FolderHelper;
 include_once "/usr/local/share/fossology/lib/php/common-container.php";
+use www\ui\api\FolderHelper;
+use api\models\Error;
+
+$app = new Silex\Application();
+$app['debug'] = true;
+
+$app->PUT('/', function (Application $app, Request $request)
+{
+  //var_dump($request->getContent("file"));
+  return new Response(json_encode($request->request->all()));
+
+});
+
+$app->POST('/', function (Application $app, Request $request)
+{
+  //var_dump($request->getContent("file"));
+  return new Response(json_encode($request->request->keys()));
+
+});
 
 $app->GET('/', function (Application $app, Request $request)
 {
-  $folderHelper = new FolderHelper();
-  return new Response(json_encode($folderHelper->getUploads(2)));
+
+
 });
 
 $app->GET('/v1/organize/uploads/{id}', function (Application $app, Request $request, $id)
 {
-
-  return new Response('How about implementing organizeUploadsIdGet as a GET method ?');
+  $folderHelper = new FolderHelper();
+  //get the id from the fossology user
+  return new Response(json_encode($folderHelper->getUploads(getUserId())));
 });
 
 
@@ -31,9 +48,8 @@ $app->PATCH('/v1/organize/uploads/{id}', function (Application $app, Request $re
 });
 
 
-$app->PUT('/v1/organize/uploads/', function (Application $app, Request $request, $id)
+$app->PUT('/v1/organize/uploads/', function (Application $app, Request $request)
 {
-
   $file = $request->files->get('file');
   if ($file == NULL)
   {
@@ -51,8 +67,8 @@ $app->PUT('/v1/organize/uploads/', function (Application $app, Request $request,
 $app->GET('/v1/organize/uploads', function (Application $app, Request $request)
 {
   $folderHelper = new FolderHelper();
-  return new Response($folderHelper->getUploads());
-
+  //get the id from the fossology user
+  return new Response(json_encode($folderHelper->getUploads(getUserId())));
 });
 
 
