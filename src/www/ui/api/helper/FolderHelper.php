@@ -8,7 +8,9 @@
 
 namespace www\ui\api;
 
+require_once '/usr/local/share/fossology/www/ui/api/models/Upload.php';
 
+use api\models\Upload;
 use Fossology\Lib\Dao\FolderDao;
 use Fossology\Lib\Auth\Auth;
 use Fossology\Lib\Dao\ShowJobsDao;
@@ -47,11 +49,22 @@ class FolderHelper
   {
     if($uploadId == NULL)
     {
-      $sql = "SELECT upload_pk, upload_ts, upload_filename, upload_desc FROM upload WHERE user_fk=".pg_escape_string($userId);
+      $sql = "SELECT DISTINCT upload.upload_pk, upload.upload_ts, upload.upload_filename, upload.upload_desc,folder.folder_pk, folder.folder_name, pfile.pfile_size
+FROM upload, folderlist, folder, pfile
+  WHERE upload.user_fk=".pg_escape_string($userId)."
+  AND folderlist.upload_pk=upload.upload_pk
+  AND pfile.pfile_pk=folderlist.pfile_fk
+";
     }
     else
     {
-      $sql = "SELECT upload_pk, upload_ts,upload_filename, upload_desc FROM upload WHERE upload_pk=".pg_escape_string($uploadId) . "AND user_fk=".pg_escape_string($userId);
+      $sql = "SELECT DISTINCT upload.upload_pk, upload.upload_ts, upload.upload_filename, upload.upload_desc,folder.folder_pk, folder.folder_name, pfile.pfile_size
+FROM upload, folderlist, folder, pfile
+  WHERE upload.user_fk=".pg_escape_string($userId)."
+  AND folderlist.upload_pk=upload.upload_pk
+  AND folderlist.upload_pk=".pg_escape_string($uploadId)."
+  AND pfile.pfile_pk=folderlist.pfile_fk
+";
     }
 
     $result = pg_query($this->PG_CONN, $sql);
@@ -59,7 +72,9 @@ class FolderHelper
     $uploads = [];
     while ($row = pg_fetch_assoc($result))
     {
-      array_push($uploads, $row);
+      $upload = new Upload($row["folder_pk"],$row["folder_name"], $row["upload_pk"], $row["upload_desc"],
+        $row["upload_filename"], $row["upload_ts"],$row["pfile_size"]);
+      array_push($uploads, $upload);
     }
     pg_free_result($result);
     return $uploads;

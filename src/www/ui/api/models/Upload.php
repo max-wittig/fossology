@@ -16,9 +16,10 @@ class Upload
    * @param $uploadDate
    * @param $fileSize
    */
-  public function __construct($folderId, $uploadId, $description, $uploadName, $uploadDate, $fileSize)
+  public function __construct($folderId, $folderName, $uploadId, $description, $uploadName, $uploadDate, $fileSize)
   {
     $this->folderId = $folderId;
+    $this->folderName = $folderName;
     $this->uploadId = $uploadId;
     $this->description = $description;
     $this->uploadName = $uploadName;

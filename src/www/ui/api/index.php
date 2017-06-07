@@ -17,14 +17,14 @@ $app['debug'] = true;
 $app->PUT('/', function (Application $app, Request $request)
 {
   //var_dump($request->getContent("file"));
-  return new Response(json_encode($request->request->all()));
+  return new Response(json_encode($request->request->all(), JSON_PRETTY_PRINT));
 
 });
 
 $app->POST('/', function (Application $app, Request $request)
 {
   //var_dump($request->getContent("file"));
-  return new Response(json_encode($request->request->keys()));
+  return new Response(json_encode($request->request->keys(), JSON_PRETTY_PRINT));
 
 });
 
@@ -32,7 +32,7 @@ $app->GET('/', function (Application $app, Request $request)
 {
   $folderHelper = new FolderHelper();
   //get the id from the fossology user
-  return new Response(json_encode($folderHelper->getUploads(getUserId())));
+  return new Response(json_encode($folderHelper->getUploads(getUserId(), 13), JSON_PRETTY_PRINT));
 
 });
 
@@ -40,7 +40,7 @@ $app->GET('/v1/organize/uploads/{id}', function (Application $app, Request $requ
 {
   $folderHelper = new FolderHelper();
   //get the id from the fossology user
-  return new Response(json_encode($folderHelper->getUploads(getUserId())));
+  return new Response(json_encode($folderHelper->getUploads(getUserId(), $id), JSON_PRETTY_PRINT));
 });
 
 
