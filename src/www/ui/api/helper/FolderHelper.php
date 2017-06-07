@@ -47,11 +47,11 @@ class FolderHelper
   {
     if($uploadId == NULL)
     {
-      $sql = "SELECT upload_pk, upload_ts, upload_filename FROM upload WHERE user_fk=".pg_escape_string($userId);
+      $sql = "SELECT upload_pk, upload_ts, upload_filename, upload_desc FROM upload WHERE user_fk=".pg_escape_string($userId);
     }
     else
     {
-      $sql = "SELECT upload_pk, upload_ts,upload_filename FROM upload WHERE upload_pk=".pg_escape_string($uploadId) . "AND user_fk=".pg_escape_string($userId);
+      $sql = "SELECT upload_pk, upload_ts,upload_filename, upload_desc FROM upload WHERE upload_pk=".pg_escape_string($uploadId) . "AND user_fk=".pg_escape_string($userId);
     }
 
     $result = pg_query($this->PG_CONN, $sql);

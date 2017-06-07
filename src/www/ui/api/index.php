@@ -30,7 +30,9 @@ $app->POST('/', function (Application $app, Request $request)
 
 $app->GET('/', function (Application $app, Request $request)
 {
-
+  $folderHelper = new FolderHelper();
+  //get the id from the fossology user
+  return new Response(json_encode($folderHelper->getUploads(getUserId())));
 
 });
 
