@@ -16,15 +16,22 @@ $app['debug'] = true;
 
 $app->PUT('/', function (Application $app, Request $request)
 {
-  //var_dump($request->getContent("file"));
-  return new Response(json_encode($request->request->all(), JSON_PRETTY_PRINT));
-
+  return new Response($request->getContent());
 });
 
 $app->POST('/', function (Application $app, Request $request)
 {
-  //var_dump($request->getContent("file"));
-  return new Response(json_encode($request->request->keys(), JSON_PRETTY_PRINT));
+  require_once "../../../delagent/ui/admin-upload-delete.php";
+  if(doesUploadIdExist(13))
+  {
+    new admin_upload_delete().Delete(13);
+    return new Response('Delete job queued', 202);
+  }
+  else
+  {
+    $error = new Error("Id doesn't exist", 404);
+    return new Response($error->getJSON(), $error->getCode());
+  }
 
 });
 
@@ -52,17 +59,7 @@ $app->PATCH('/v1/organize/uploads/{id}', function (Application $app, Request $re
 
 $app->PUT('/v1/organize/uploads/', function (Application $app, Request $request)
 {
-  $file = $request->files->get('file');
-  if ($file == NULL)
-  {
-    return 'null';
-  }
-  else
-  {
-    return 'not null';
-  }
 
-  return new Response('How about implementing organizeUploadsIdPut as a PUT method ?');
 });
 
 
@@ -87,30 +84,5 @@ $app->DELETE('/v1/organize/uploads/{id}', function (Application $app, Request $r
     return new Response(new Error("Id doesn't exist", 404).getJSON(), 404);
   }
 });
-
-
-$app->GET('/v1/organize/uploads/{id}', function (Application $app, Request $request, $id)
-{
-
-
-  return new Response('How about implementing organizeUploadsIdGet as a GET method ?');
-});
-
-
-$app->PATCH('/v1/organize/uploads/{id}', function (Application $app, Request $request, $id)
-{
-
-
-  return new Response('How about implementing organizeUploadsIdPatch as a PATCH method ?');
-});
-
-
-$app->PUT('/v1/organize/uploads/{id}', function (Application $app, Request $request, $id)
-{
-
-
-  return new Response('How about implementing organizeUploadsIdPut as a PUT method ?');
-});
-
 
 $app->run();
