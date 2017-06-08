@@ -19,12 +19,13 @@ $app->PUT('/', function (Application $app, Request $request)
   return new Response($request->getContent());
 });
 
-$app->POST('/', function (Application $app, Request $request)
+$app->DELETE('/', function (Application $app, Request $request)
 {
-  require_once "../../../delagent/ui/admin-upload-delete.php";
+  require_once "../../../delagent/ui/delete-helper.php";
+
   if(doesUploadIdExist(13))
   {
-    new admin_upload_delete().Delete(13);
+    Delete(getUserId(), getGroupId(), 13);
     return new Response('Delete job queued', 202);
   }
   else
@@ -32,7 +33,6 @@ $app->POST('/', function (Application $app, Request $request)
     $error = new Error("Id doesn't exist", 404);
     return new Response($error->getJSON(), $error->getCode());
   }
-
 });
 
 $app->GET('/', function (Application $app, Request $request)
@@ -73,16 +73,19 @@ $app->GET('/v1/organize/uploads', function (Application $app, Request $request)
 
 $app->DELETE('/v1/organize/uploads/{id}', function (Application $app, Request $request, $id)
 {
-  include_once "../delagent/ui/admin-upload-delete.php";
-  if(doesUploadIdExist($id))
+  require_once "../../../delagent/ui/delete-helper.php";
+
+  if(doesUploadIdExist(13))
   {
-    new admin_upload_delete().Delete($id);
+    
     return new Response('Delete job queued', 202);
   }
   else
   {
-    return new Response(new Error("Id doesn't exist", 404).getJSON(), 404);
+    $error = new Error("Id doesn't exist", 404);
+    return new Response($error->getJSON(), $error->getCode());
   }
+
 });
 
 $app->run();

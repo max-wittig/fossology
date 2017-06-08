@@ -29,6 +29,14 @@ class Upload
 
   public function getJSON()
   {
-    return json_encode($this);
+    return json_encode(array(
+      'folderId' => $this->folderId,
+      'folderName' => $this->folderName,
+      'uploadId' => $this->uploadId,
+      "description" => $this->description,
+      "uploadName" => $this->uploadName,
+      "uploadDate" => $this->uploadDate,
+      "fileSize" => $this->fileSize
+    ));
   }
 }
