@@ -49,71 +49,6 @@ class admin_upload_delete extends FO_Plugin
   }
 
   /**
-   * \brief Given a folder_pk, try to add a job after checking permissions.
-   * \param $uploadpk - the upload(upload_id) you want to delete
-   *
-   * \return string with the message.
-   */
-  function TryToDelete($uploadpk) {
-    if(!$this->uploadDao->isEditable($uploadpk, Auth::getGroupId())){
-      $text=_("You dont have permissions to delete the upload");
-      return DisplayMessage($text);
-    }
-
-    $rc = $this->Delete($uploadpk);
-
-    if (! empty($rc)) {
-      $text=_("Deletion Scheduling failed: ");
-      return DisplayMessage($text.$rc);
-    }
-
-    /* Need to refresh the screen */
-    $URL = Traceback_uri() . "?mod=showjobs&upload=$uploadpk ";
-    $LinkText = _("View Jobs");
-    $text=_("Deletion added to job queue.");
-    $msg = "$text <a href=$URL>$LinkText</a>";
-    return displayMessage($msg);
-  }
-
-  /**
-   * \brief Given a folder_pk, add a job.
-   * \param $uploadpk - the upload(upload_id) you want to delete
-   * \param $Depends - Depends is not used for now
-   *
-   * \return NULL on success, string on failure.
-   */
-  public function Delete($uploadpk, $Depends = NULL)
-  {
-    /* Prepare the job: job "Delete" */
-    $user_pk = Auth::getUserId();
-    $group_pk = Auth::getGroupId();
-    $jobpk = JobAddJob($user_pk, $group_pk, "Delete", $uploadpk);
-    if (empty($jobpk) || ($jobpk < 0)) {
-      $text = _("Failed to create job record");
-      return ($text);
-    }
-    /* Add job: job "Delete" has jobqueue item "delagent" */
-    $jqargs = "DELETE UPLOAD $uploadpk";
-    $jobqueuepk = JobQueueAdd($jobpk, "delagent", $jqargs, NULL, NULL);
-    if (empty($jobqueuepk)) {
-      $text = _("Failed to place delete in job queue");
-      return ($text);
-    }
-
-    /* Tell the scheduler to check the queue. */
-    $success  = fo_communicate_with_scheduler("database", $output, $error_msg);
-    if (!$success) 
-    {
-      $error_msg = _("Is the scheduler running? Your jobs have been added to job queue.");
-      $URL = Traceback_uri() . "?mod=showjobs&upload=$uploadpk ";
-      $LinkText = _("View Jobs");
-      $msg = "$error_msg <a href=$URL>$LinkText</a>";
-      return $msg; 
-    }
-    return (NULL);
-  } // Delete()
-
-  /**
    * \brief Generate the text for this plugin.
    */
   public function Output()
@@ -122,7 +57,7 @@ class admin_upload_delete extends FO_Plugin
     /* If this is a POST, then process the request. */
     $uploadpk = GetParm('upload', PARM_INTEGER);
     if (!empty($uploadpk)) {
-      $V.= $this->TryToDelete($uploadpk);
+      $V.= $this->TryToDelete($uploadpk, Auth::getUserId(), Auth::getGroupId());
     }
     /* Create the AJAX (Active HTTP) javascript for doing the reply
      and showing the response. */

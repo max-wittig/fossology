@@ -21,11 +21,12 @@ $app->PUT('/', function (Application $app, Request $request)
 
 $app->DELETE('/', function (Application $app, Request $request)
 {
-  require_once "../../../delagent/ui/delete-helper.php";
+  require_once "../../../delagent/ui/delete_helper.php";
+  $upload_pk = 13;
 
-  if(doesUploadIdExist(13))
+  if(doesUploadIdExist($upload_pk))
   {
-    Delete(getUserId(), getGroupId(), 13);
+    TryToDelete($upload_pk, getUserId(), getGroupId());
     return new Response('Delete job queued', 202);
   }
   else
@@ -75,9 +76,9 @@ $app->DELETE('/v1/organize/uploads/{id}', function (Application $app, Request $r
 {
   require_once "../../../delagent/ui/delete-helper.php";
 
-  if(doesUploadIdExist(13))
+  if(doesUploadIdExist($id))
   {
-    
+    TryToDelete($id, getUserId(), getGroupId());
     return new Response('Delete job queued', 202);
   }
   else
@@ -85,7 +86,6 @@ $app->DELETE('/v1/organize/uploads/{id}', function (Application $app, Request $r
     $error = new Error("Id doesn't exist", 404);
     return new Response($error->getJSON(), $error->getCode());
   }
-
 });
 
 $app->run();
