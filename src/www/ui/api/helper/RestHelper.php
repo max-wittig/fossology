@@ -1,12 +1,11 @@
 <?php
 
 include_once "FolderHelper.php";
-require_once "../../../delagent/ui/delete-helper.php";
 
 use \Fossology\Lib\Dao\UploadPermissionDao;
 use \Fossology\Lib\Dao\UploadDao;
 use www\ui\api\FolderHelper;
-
+use Monolog\Logger;
 
 class RestHelper
 {
@@ -14,8 +13,7 @@ class RestHelper
   private $folderHelper;
   private $logger;
   private $uploadDao;
-  private $uploadPermissionDao;
-
+  //private $uploadPermissionDao;
 
   /**
    * RestHelper constructor.
@@ -23,9 +21,9 @@ class RestHelper
   public function __construct()
   {
     $this->folderHelper = new FolderHelper();
-    $this->logger = new \Monolog\Logger("Default");
-    $this->uploadPermissionDao = new UploadPermissionDao($this->dbManager, $this->logger);
-    $this->uploadDao = new UploadDao($this->dbManager, $this->logger, $this->uploadPermissionDao);
+    $this->logger = new Logger("Test");
+    $this->uploadPermissionDao = new UploadPermissionDao($this->folderHelper->getDbManager(), $this->logger);
+    $this->uploadDao = new UploadDao($this->folderHelper->getDbManager(), $this->logger, $this->uploadPermissionDao);
   }
 
   public function doesUploadIdExist($id)
@@ -78,10 +76,9 @@ class RestHelper
   /**
    * @return UploadPermissionDao
    */
+
   public function getUploadPermissionDao()
   {
     return $this->uploadPermissionDao;
   }
-
-
 }

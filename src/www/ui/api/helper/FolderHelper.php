@@ -33,8 +33,6 @@ class FolderHelper
    */
   public function __construct()
   {
-    $container = $GLOBALS['container'];
-    $this->dbManager = $container->get('db.manager');
     $logLevel = Logger::INFO;
     $logger = new Logger(__FILE__);
     $logger->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, $logLevel));
