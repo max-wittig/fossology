@@ -24,7 +24,7 @@ use Fossology\Lib\Dao\UploadDao;
  * \file admin_upload_delete.php
  * \brief delete a upload
  */
-
+require_once "delete-helper.php";
 define("TITLE_admin_upload_delete", _("Delete Uploaded File"));
 
 /**
@@ -57,7 +57,7 @@ class admin_upload_delete extends FO_Plugin
     /* If this is a POST, then process the request. */
     $uploadpk = GetParm('upload', PARM_INTEGER);
     if (!empty($uploadpk)) {
-      $V.= $this->TryToDelete($uploadpk, Auth::getUserId(), Auth::getGroupId());
+      $V.= TryToDelete($uploadpk, Auth::getUserId(), Auth::getGroupId(), $this->uploadDao);
     }
     /* Create the AJAX (Active HTTP) javascript for doing the reply
      and showing the response. */

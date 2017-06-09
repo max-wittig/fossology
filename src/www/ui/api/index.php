@@ -4,14 +4,15 @@ require_once '/usr/local/share/fossology/vendor/autoload.php';
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
-include_once "helper/rest-helper.php";
+include_once "helper/RestHelper.php";
 include_once "models/Error.php";
-include_once "helper/FolderHelper.php";
 include_once "/usr/local/share/fossology/lib/php/common-container.php";
-use www\ui\api\FolderHelper;
+
 use api\models\Error;
 
 $app = new Silex\Application();
+global $restHelper;
+$restHelper = new RestHelper();
 $app['debug'] = true;
 
 $app->PUT('/', function (Application $app, Request $request)
@@ -21,12 +22,13 @@ $app->PUT('/', function (Application $app, Request $request)
 
 $app->DELETE('/', function (Application $app, Request $request)
 {
-  require_once "../../../delagent/ui/delete_helper.php";
+  return new Response("Test");
+  global $restHelper;
   $upload_pk = 13;
 
-  if(doesUploadIdExist($upload_pk))
+  if($restHelper->doesUploadIdExist($upload_pk))
   {
-    TryToDelete($upload_pk, getUserId(), getGroupId());
+    TryToDelete($upload_pk, $restHelper->getUserId(), $restHelper->getGroupId(), $this->uploadDao);
     return new Response('Delete job queued', 202);
   }
   else
@@ -38,17 +40,17 @@ $app->DELETE('/', function (Application $app, Request $request)
 
 $app->GET('/', function (Application $app, Request $request)
 {
-  $folderHelper = new FolderHelper();
+  global $restHelper;
   //get the id from the fossology user
-  return new Response(json_encode($folderHelper->getUploads(getUserId(), 13), JSON_PRETTY_PRINT));
+  return new Response(json_encode($this->folderHelper->getUploads($restHelper->getUserId(), 13), JSON_PRETTY_PRINT));
 
 });
 
 $app->GET('/v1/organize/uploads/{id}', function (Application $app, Request $request, $id)
 {
-  $folderHelper = new FolderHelper();
+  global $restHelper;
   //get the id from the fossology user
-  return new Response(json_encode($folderHelper->getUploads(getUserId(), $id), JSON_PRETTY_PRINT));
+  return new Response(json_encode($this->folderHelper->getUploads($restHelper->getUserId(), $id), JSON_PRETTY_PRINT));
 });
 
 
@@ -66,19 +68,21 @@ $app->PUT('/v1/organize/uploads/', function (Application $app, Request $request)
 
 $app->GET('/v1/organize/uploads', function (Application $app, Request $request)
 {
-  $folderHelper = new FolderHelper();
+  global $restHelper;
+
   //get the id from the fossology user
-  return new Response(json_encode($folderHelper->getUploads(getUserId())));
+  return new Response(json_encode($this->folderHelper->getUploads($restHelper->getUserId())));
 });
 
 
 $app->DELETE('/v1/organize/uploads/{id}', function (Application $app, Request $request, $id)
 {
   require_once "../../../delagent/ui/delete-helper.php";
+  global $restHelper;
 
-  if(doesUploadIdExist($id))
+  if($restHelper->doesUploadIdExist($id))
   {
-    TryToDelete($id, getUserId(), getGroupId());
+    TryToDelete($id, $restHelper->getUserId(), $restHelper->getGroupId(), $this->uploadDao);
     return new Response('Delete job queued', 202);
   }
   else

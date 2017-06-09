@@ -8,8 +8,8 @@ include_once "/usr/local/share/fossology/lib/php/common-job.php";
  *
  * \return string with the message.
  */
-function TryToDelete($uploadpk, $user_pk, $group_pk) {
-  if(!$this->uploadDao->isEditable($uploadpk, $group_pk)){
+function TryToDelete($uploadpk, $user_pk, $group_pk, $uploadDao) {
+  if(!$uploadDao->isEditable($uploadpk, $group_pk)){
     $text=_("You dont have permissions to delete the upload");
     return DisplayMessage($text);
   }

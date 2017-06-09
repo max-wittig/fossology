@@ -88,5 +88,15 @@ FROM upload, folderlist, folder, pfile
     return $this->folderDao;
   }
 
+  /**
+   * @return SolidDbManager
+   */
+  public function getDbManager()
+  {
+    return $this->dbManager;
+  }
+
+
+
 
 }
