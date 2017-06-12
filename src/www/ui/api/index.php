@@ -26,7 +26,8 @@ $_SESSION['UserLevel'] = "admin";
 $app->PUT('/', function (Application $app, Request $request)
 {
   $restHelper = new RestHelper();
-  return new Response($restHelper->getFilteredFile($request->getContent()));
+  $filteredFile = $restHelper->getFilteredFile($request->getContent());
+  return new Response($filteredFile->getJSON());
 });
 
 $app->DELETE('/', function (Application $app, Request $request)

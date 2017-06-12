@@ -1,6 +1,8 @@
 <?php
 
 include_once "FolderHelper.php";
+include_once "StringHelper.php";
+include_once '/usr/local/share/fossology/www/ui/api/models/File.php';
 
 use \Fossology\Lib\Dao\UploadPermissionDao;
 use \Fossology\Lib\Dao\UploadDao;
@@ -8,10 +10,12 @@ use www\ui\api\FolderHelper;
 use Monolog\Logger;
 use www\ui\api\helper\DbHelper;
 use \www\ui\api\models\File;
+use \www\ui\api\helper\StringHelper;
 
 class RestHelper
 {
   private $folderHelper;
+  private $stringHelper;
   private $logger;
   private $uploadDao;
   private $dbHelper;
@@ -23,6 +27,7 @@ class RestHelper
   {
     $this->dbHelper = new DbHelper();
     $this->folderHelper = new FolderHelper();
+    $this->stringHelper = new StringHelper();
     $this->logger = new Logger(__FILE__);
     $this->uploadPermissionDao = new UploadPermissionDao($this->dbHelper->getDbManager(), $this->logger);
     $this->uploadDao = new UploadDao($this->dbHelper->getDbManager(), $this->logger, $this->uploadPermissionDao);
@@ -53,14 +58,14 @@ class RestHelper
   public function getFilteredFile($rawOutput)
   {
     $cutString = explode("\n",$rawOutput);
-    $webKitBoundaryString = trim($cutString[0]);
+    $webKitBoundaryString = trim(str_replace("-", "",$cutString[0]));
     $contentDispositionString = trim($cutString[1]);
     $contentTypeString = trim($cutString[2]);
 
 
     $filename = explode("filename=", $contentDispositionString)[1];
     $contentTypeCut = explode("Content-Type:", $contentTypeString)[1];
-    $content = $this->getContentBetweenString($rawOutput, 3, $webKitBoundaryString);
+    $content = $this->stringHelper->getContentBetweenString($rawOutput, array(0,1,2,3), $webKitBoundaryString);
     return new File($filename, $contentTypeCut, $content);
   }
 

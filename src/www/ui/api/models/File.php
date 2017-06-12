@@ -47,6 +47,17 @@ class File
     return $this->fileContent;
   }
 
+  /**
+   * @return string json
+   */
+  public function getJSON()
+  {
+    return json_encode(array(
+      'filename' => $this->filename,
+      'content-type' => $this->contentType,
+      'fileContent' => $this->fileContent
+    ));
+  }
 
 
 

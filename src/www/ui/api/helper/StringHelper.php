@@ -1,29 +1,41 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: one
- * Date: 6/12/17
- * Time: 1:28 PM
- */
+
 
 namespace www\ui\api\helper;
 
 
 class StringHelper
 {
+  /**
+   * Removes lines from string
+   * @param $lineNumbersToRemove
+   * @param $wholeString
+   * @return string
+   */
   function removeLines($lineNumbersToRemove, $wholeString)
   {
-    
+    $splitString = explode("\n", $wholeString);
+    for($i=0; $i < sizeof($splitString); $i++)
+    {
+      if(in_array($i, $lineNumbersToRemove))
+      {
+        unset($splitString[$i]);
+      }
+    }
+    return implode("\n",$splitString);
   }
 
   /**
    * @param $wholeString - the string that needs to be cut
-   * @param $startLineNumber - number where to start the content
+   * @param $numbersToRemove - numbers to remove from string
    * @param $outerLowerString - the string on the bottom of the file
    * @return string - content
    */
-  function getContentBetweenString($wholeString, $startLineNumber, $outerLowerString)
+  function getContentBetweenString($wholeString, $numbersToRemove, $outerLowerString)
   {
-    $cutString = $wholeString
+    //remove numbers in array from string
+    $cutString = $this->removeLines($numbersToRemove, $wholeString);
+    $contentString = substr($cutString, 0, strpos($cutString, $outerLowerString));
+    return $contentString;
   }
 }

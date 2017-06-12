@@ -12,6 +12,7 @@ class Info
    * Error constructor.
    * @param $code
    * @param $message
+   * @param $type
    */
   public function __construct($code, $message, $type)
   {
