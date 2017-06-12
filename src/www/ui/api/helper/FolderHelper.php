@@ -36,7 +36,7 @@ class FolderHelper
     $logLevel = Logger::INFO;
     $logger = new Logger(__FILE__);
     $logger->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, $logLevel));
-    $this->dbManager = new SolidDbManager($logger);
+    $this->dbManager = new ModernDbManager($logger);
     $this->PG_CONN = pg_connect("host=localhost port=5432 dbname=fossology user=fossy password=fossy")
     or die("Could not connect");
     $pgDriver = new Postgres($this->PG_CONN);
@@ -87,12 +87,21 @@ FROM upload, folderlist, folder, pfile
   }
 
   /**
-   * @return SolidDbManager
+   * @return ModernDbManager
    */
   public function getDbManager()
   {
     return $this->dbManager;
   }
+
+  /**
+   * @return resource
+   */
+  public function getPGCONN()
+  {
+    return $this->PG_CONN;
+  }
+
 
 
 

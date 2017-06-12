@@ -1,20 +1,25 @@
 <?php
 
 include_once "/usr/local/share/fossology/lib/php/common-job.php";
+include_once "/usr/local/share/fossology/lib/php/common-scheduler.php";
+include_once "/usr/local/share/fossology/lib/php/common-parm.php";
+include_once "/usr/local/share/fossology/lib/php/common-active.php";
 
 /**
  * \brief Given a folder_pk, try to add a job after checking permissions.
- * \param $uploadpk - the upload(upload_id) you want to delete
- *
- * \return string with the message.
+ * @param $uploadpk - the upload(upload_id) you want to delete
+ * @param $user_pk - the user_id
+ * @param $group_pk - the group_id
+ * @param $uploadDao - an instance of a uploadDao
+ * @return string with the message.
  */
 function TryToDelete($uploadpk, $user_pk, $group_pk, $uploadDao) {
-  /*if(!$uploadDao->isEditable($uploadpk, $group_pk)){
+  if(!$uploadDao->isEditable($uploadpk, $group_pk)){
     $text=_("You dont have permissions to delete the upload");
     return DisplayMessage($text);
-  }*/
+  }
 
-  $rc = Delete($uploadpk, $user_pk, $group_pk);
+  $rc = Delete($uploadpk, $user_pk, $group_pk, NULL);
 
   if (! empty($rc)) {
     $text=_("Deletion Scheduling failed: ");
@@ -31,10 +36,12 @@ function TryToDelete($uploadpk, $user_pk, $group_pk, $uploadDao) {
 
 /**
  * \brief Given a folder_pk, add a job.
- * \param $uploadpk - the upload(upload_id) you want to delete
- * \param $Depends - Depends is not used for now
- *
- * \return NULL on success, string on failure.
+ * @param $uploadpk - the upload(upload_id) you want to delete
+ * @param $Depends - Depends is not used for now
+ * @param $user_pk - Id of a user
+ * @param $group_pk - Id of the group
+ * @param $dbManager - an instance of the db manager
+ * @return NULL on success, string on failure.
  */
 function Delete($uploadpk, $user_pk, $group_pk, $Depends = NULL)
 {

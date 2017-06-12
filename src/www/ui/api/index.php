@@ -28,13 +28,15 @@ $app->PUT('/', function (Application $app, Request $request)
 
 $app->DELETE('/', function (Application $app, Request $request)
 {
-  $upload_pk = 3;
+  $upload_pk = 8;
   $restHelper = new RestHelper();
 
   if($restHelper->doesUploadIdExist($upload_pk))
   {
+    define("PLUGIN_DB_ADMIN", 0);
     TryToDelete($upload_pk, $restHelper->getUserId(), $restHelper->getGroupId(), $restHelper->getUploadDao());
-    return new Response('Delete job queued', 202);
+
+    return new Response('Delete job queued.', 202);
   }
   else
   {
