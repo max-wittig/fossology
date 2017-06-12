@@ -1,12 +1,11 @@
 <?php
 
-require_once '/usr/local/share/fossology/www/ui/api/helper/FolderHelper.php';
+require_once '/usr/local/share/fossology/www/ui/api/helper/DbHelper.php';
 require_once 'common-db.php';
 
 use Fossology\Lib\Auth\Auth;
 use Fossology\Lib\Dao\FolderDao;
-use Fossology\Lib\Db\DbManager;
-use www\ui\api\FolderHelper;
+use www\ui\api\helper\DbHelper;
 /***********************************************************
  Copyright (C) 2008-2015 Hewlett-Packard Development Company, L.P.
  Copyright (C) 2015 Siemens AG
@@ -75,8 +74,8 @@ function JobAddUpload($userId, $groupId, $job_name, $filename, $desc, $UploadMod
   $dbManager = $container->get('db.manager');
   if(empty($dbManager))
   {
-    $folderHelper = new FolderHelper();
-    $dbManager = $folderHelper->getDbManager();
+    $dbHelper = new DbHelper();
+    $dbManager = $dbHelper->getDbManager();
   }
   /* check all required inputs */
   if (empty($userId) or empty($job_name) or empty($filename) or
@@ -121,8 +120,8 @@ function JobAddJob($userId, $groupId, $job_name, $upload_pk=0, $priority=0)
 
   if(empty($dbManager))
   {
-    $folderHelper = new FolderHelper();
-    $dbManager = $folderHelper->getDbManager();
+    $dbHelper = new DbHelper();
+    $dbManager = $dbHelper->getDbManager();
   }
 
   $upload_pk_val = empty($upload_pk) ? null : $upload_pk;
@@ -172,8 +171,8 @@ function JobQueueAdd($job_pk, $jq_type, $jq_args, $jq_runonpfile, $Depends, $hos
 
   if(empty($PG_CONN))
   {
-    $folderHelper = new FolderHelper();
-    $PG_CONN = $folderHelper->getPGCONN();
+    $dbHelper = new DbHelper();
+    $PG_CONN = $dbHelper->getPGCONN();
   }
 
   $jq_args = pg_escape_string($jq_args);

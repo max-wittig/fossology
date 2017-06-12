@@ -10,6 +10,7 @@ class Upload
   /**
    * Upload constructor.
    * @param $folderId
+   * @param $folderName
    * @param $uploadId
    * @param $description
    * @param $uploadName
@@ -27,6 +28,9 @@ class Upload
     $this->fileSize = $fileSize;
   }
 
+  /**
+   * @return string UploadJSON
+   */
   public function getJSON()
   {
     return json_encode(array(

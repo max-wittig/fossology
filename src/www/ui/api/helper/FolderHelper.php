@@ -1,46 +1,25 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: one
- * Date: 6/6/17
- * Time: 2:09 PM
- */
 
 namespace www\ui\api;
 
 require_once '/usr/local/share/fossology/www/ui/api/models/Upload.php';
+require_once 'DbHelper.php';
 
 use api\models\Upload;
 use Fossology\Lib\Dao\FolderDao;
-use Fossology\Lib\Auth\Auth;
-use Fossology\Lib\Dao\ShowJobsDao;
-use Fossology\Lib\Dao\UserDao;
-use Fossology\Lib\Db\DbManager;
-use Fossology\Lib\Db\Driver\Postgres;
-use Fossology\Lib\Db\ModernDbManager;
-use Fossology\Lib\Db\SolidDbManager;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
+use www\ui\api\helper\DbHelper;
 
 class FolderHelper
 {
   private $folderDao;
-  private $dbManager;
-  private $PG_CONN;
+  private $dbHelper;
 
   /**
    * FolderHelper constructor.
    */
   public function __construct()
   {
-    $logLevel = Logger::INFO;
-    $logger = new Logger(__FILE__);
-    $logger->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, $logLevel));
-    $this->dbManager = new ModernDbManager($logger);
-    $this->PG_CONN = pg_connect("host=localhost port=5432 dbname=fossology user=fossy password=fossy")
-    or die("Could not connect");
-    $pgDriver = new Postgres($this->PG_CONN);
-    $this->dbManager->setDriver($pgDriver);
+    $this->dbHelper = new DbHelper();
   }
 
   public function getUploads($userId, $uploadId = NULL)
@@ -65,7 +44,7 @@ FROM upload, folderlist, folder, pfile
 ";
     }
 
-    $result = pg_query($this->PG_CONN, $sql);
+    $result = pg_query($this->dbHelper->getPGCONN(), $sql);
     //DBCheckResult($result, $sql, __FILE__, __LINE__);
     $uploads = [];
     while ($row = pg_fetch_assoc($result))
@@ -85,25 +64,4 @@ FROM upload, folderlist, folder, pfile
   {
     return $this->folderDao;
   }
-
-  /**
-   * @return ModernDbManager
-   */
-  public function getDbManager()
-  {
-    return $this->dbManager;
-  }
-
-  /**
-   * @return resource
-   */
-  public function getPGCONN()
-  {
-    return $this->PG_CONN;
-  }
-
-
-
-
-
 }

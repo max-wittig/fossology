@@ -6,24 +6,25 @@ use \Fossology\Lib\Dao\UploadPermissionDao;
 use \Fossology\Lib\Dao\UploadDao;
 use www\ui\api\FolderHelper;
 use Monolog\Logger;
+use www\ui\api\helper\DbHelper;
 
 class RestHelper
 {
-  private $dbManager;
   private $folderHelper;
   private $logger;
   private $uploadDao;
-  //private $uploadPermissionDao;
+  private $dbHelper;
 
   /**
    * RestHelper constructor.
    */
   public function __construct()
   {
+    $this->dbHelper = new DbHelper();
     $this->folderHelper = new FolderHelper();
-    $this->logger = new Logger("Test");
-    $this->uploadPermissionDao = new UploadPermissionDao($this->folderHelper->getDbManager(), $this->logger);
-    $this->uploadDao = new UploadDao($this->folderHelper->getDbManager(), $this->logger, $this->uploadPermissionDao);
+    $this->logger = new Logger(__FILE__);
+    $this->uploadPermissionDao = new UploadPermissionDao($this->dbHelper->getDbManager(), $this->logger);
+    $this->uploadDao = new UploadDao($this->dbHelper->getDbManager(), $this->logger, $this->uploadPermissionDao);
   }
 
   public function doesUploadIdExist($id)
@@ -39,14 +40,6 @@ class RestHelper
   public function getGroupId()
   {
     return 3;
-  }
-
-  /**
-   * @return mixed
-   */
-  public function getDbManager()
-  {
-    return $this->dbManager;
   }
 
   /**

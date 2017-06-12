@@ -1,9 +1,6 @@
 <?php
 
-include_once "/usr/local/share/fossology/lib/php/common-job.php";
-include_once "/usr/local/share/fossology/lib/php/common-scheduler.php";
-include_once "/usr/local/share/fossology/lib/php/common-parm.php";
-include_once "/usr/local/share/fossology/lib/php/common-active.php";
+include_once "/usr/local/share/fossology/lib/php/common.php";
 
 /**
  * \brief Given a folder_pk, try to add a job after checking permissions.
