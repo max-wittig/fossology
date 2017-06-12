@@ -2,6 +2,8 @@
 include_once '/usr/local/share/fossology/vendor/autoload.php';
 include_once "helper/RestHelper.php";
 include_once "../../../delagent/ui/delete-helper.php";
+include_once "models/InfoType.php";
+include_once "models/Info.php";
 
 use Symfony\Component\HttpKernel\Debug\ErrorHandler;
 use Symfony\Component\HttpKernel\Debug\ExceptionHandler;
@@ -13,7 +15,8 @@ ErrorHandler::register();
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
-use api\models\Error;
+use api\models\Info;
+use \www\ui\api\models\InfoType;
 
 
 $app = new Silex\Application();
@@ -29,16 +32,17 @@ $app->PUT('/', function (Application $app, Request $request)
 $app->DELETE('/', function (Application $app, Request $request)
 {
   $restHelper = new RestHelper();
-  $id = 7;
+  $id = 3;
   if($restHelper->doesUploadIdExist($id))
   {
     define("PLUGIN_DB_ADMIN", 0);
     TryToDelete($id, $restHelper->getUserId(), $restHelper->getGroupId(), $restHelper->getUploadDao());
-    return new Response('Delete job queued.', 202);
+    $info = new Info(202, "Delete Job for file with id ". $id,InfoType::INFO);
+    return new Response($info->getJSON(), $info->getCode());
   }
   else
   {
-    $error = new Error("Id doesn't exist", 404);
+    $error = new Info("Id doesn't exist", 404, InfoType::ERROR);
     return new Response($error->getJSON(), $error->getCode());
   }
 });
@@ -85,7 +89,7 @@ $app->DELETE('/v1/organize/uploads/{id}', function (Application $app, Request $r
   }
   else
   {
-    $error = new Error("Id doesn't exist", 404);
+    $error = new Info("Id doesn't exist", 404, InfoType::ERROR);
     return new Response($error->getJSON(), $error->getCode());
   }
 });
