@@ -6,7 +6,6 @@ include_once "models/InfoType.php";
 include_once "models/Info.php";
 
 use Symfony\Component\HttpKernel\Debug\ErrorHandler;
-use Symfony\Component\HttpKernel\Debug\ExceptionHandler;
 ini_set('display_errors', 1);
 error_reporting(-1);
 ErrorHandler::register();
@@ -26,13 +25,14 @@ $_SESSION['UserLevel'] = "admin";
 
 $app->PUT('/', function (Application $app, Request $request)
 {
-  return new Response($request->getContent());
+  $restHelper = new RestHelper();
+  return new Response($restHelper->getFilteredFile($request->getContent()));
 });
 
 $app->DELETE('/', function (Application $app, Request $request)
 {
   $restHelper = new RestHelper();
-  $id = 3;
+  $id = 8;
   if($restHelper->doesUploadIdExist($id))
   {
     define("PLUGIN_DB_ADMIN", 0);

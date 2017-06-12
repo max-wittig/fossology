@@ -7,6 +7,7 @@ use \Fossology\Lib\Dao\UploadDao;
 use www\ui\api\FolderHelper;
 use Monolog\Logger;
 use www\ui\api\helper\DbHelper;
+use \www\ui\api\models\File;
 
 class RestHelper
 {
@@ -40,6 +41,27 @@ class RestHelper
   public function getGroupId()
   {
     return 3;
+  }
+
+  /**
+   * This method filters content that starts with ------WebKitFormBoundaryXXXXXXXXX
+   * and ends with ------WebKitFormBoundaryXXXXXXXXX---
+   * This is required, because the silex framework can't do that natively on put request
+   * @param $rawOutput
+   * @return string
+   */
+  public function getFilteredFile($rawOutput)
+  {
+    $cutString = explode("\n",$rawOutput);
+    $webKitBoundaryString = trim($cutString[0]);
+    $contentDispositionString = trim($cutString[1]);
+    $contentTypeString = trim($cutString[2]);
+
+
+    $filename = explode("filename=", $contentDispositionString)[1];
+    $contentTypeCut = explode("Content-Type:", $contentTypeString)[1];
+    $content = $this->getContentBetweenString($rawOutput, 3, $webKitBoundaryString);
+    return new File($filename, $contentTypeCut, $content);
   }
 
   /**

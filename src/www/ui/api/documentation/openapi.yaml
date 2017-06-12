@@ -47,19 +47,19 @@ paths:
         400:
           description: Bad request, id NaN etc.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/Info'
         401:
           description: Unauthorized, no authentification provided
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/Info'
         403:
           description: Forbidden, no access to upload
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/Info'
         404:
           description: Not found
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/Info'
     delete:
       tags:
         - Upload
@@ -74,6 +74,8 @@ paths:
       responses:
         202:
           description: Upload will be deleted
+          schema:
+            $ref: '#/definitions/Info'
     patch:
       tags:
         - Upload
@@ -85,13 +87,15 @@ paths:
           required: true
           type: number
         - name: folder_id
-          description: folder, where upload is located
+          description: folder, where upload is located (change this to move upload)
           in: header
           required: false
           type: string
       responses:
         202:
           description: Upload will be moved
+          schema:
+            $ref: '#/definitions/Info'
     put:
       tags:
         - Upload
@@ -103,9 +107,32 @@ paths:
           in: path
           required: true
           type: number
+        - name: folder_id
+          description: Folder Id, where upload should be copied to
+          in: header
+          required: true
+          type: number
       responses:
         202:
           description: Upload will be copied
+          schema:
+            $ref: '#/definitions/Info'
+        400:
+          description: Bad request
+          schema:
+            $ref: '#/definitions/Info'
+        401:
+          description: Unauthorized, no authentification provided
+          schema:
+            $ref: '#/definitions/Info'
+        403:
+          description: Forbidden, no access to upload
+          schema:
+            $ref: '#/definitions/Info'
+        404:
+          description: Id not found
+          schema:
+            $ref: '#/definitions/Info'
 
   /organize/uploads:
     get:
@@ -124,25 +151,25 @@ paths:
         401:
           description: Unauthorized, no authentification provided
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/Info'
         403:
           description: Forbidden, no access to upload
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/Info'
         default:
           description: Unexpected error
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/Info'
 
 definitions:
   Upload:
     type: object
     properties:
-      in_folder_id:
+      folder_id:
         type: number
         format: int
         description: The folder id, where the upload is located
-      upload_id:
+      id:
         type: number
         format: int
         description: Upload id of the upload.
@@ -158,7 +185,7 @@ definitions:
       file_size:
         type: number
         description: Filesize in Bytes.
-  Error:
+  Info:
     type: object
     properties:
       code:
@@ -166,6 +193,6 @@ definitions:
         format: int32
       message:
         type: string
-      fields:
+      type:
         type: string
 
