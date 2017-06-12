@@ -69,7 +69,9 @@ $app->PATCH('/v1/organize/uploads/{id}', function (Application $app, Request $re
 
 $app->PUT('/v1/organize/uploads/', function (Application $app, Request $request)
 {
-
+  $restHelper = new RestHelper();
+  $filteredFile = $restHelper->getFilteredFile($request->getContent());
+  return new Response($filteredFile->getJSON());
 });
 
 $app->GET('/v1/organize/uploads', function (Application $app, Request $request)
