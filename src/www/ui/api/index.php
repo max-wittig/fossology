@@ -21,6 +21,7 @@ use \www\ui\api\helper\DbHelper;
 
 $app = new Silex\Application();
 $app['debug'] = true;
+$_SESSION['UserLevel'] = "fossy";
 
 $app->GET('/repo/api/v1/organize/uploads/{id}', function (Application $app, Request $request, $id)
 {

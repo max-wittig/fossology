@@ -35,11 +35,16 @@ class RestHelper
 
   public function getUserId()
   {
+    //TODO provide some way for the user to authorize!
+    //Currently user fossy is logged in id=3
+    define("PLUGIN_DB_ADMIN",0);
     return 3;
   }
 
   public function getGroupId()
   {
+    //TODO provide some way for the user to authorize!
+    //Currently user fossy is logged in id=3
     return 3;
   }
 
