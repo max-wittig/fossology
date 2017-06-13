@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: one
- * Date: 6/12/17
- * Time: 10:29 AM
- */
 
 namespace www\ui\api\models;
 

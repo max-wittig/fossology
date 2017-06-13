@@ -33,11 +33,6 @@ class RestHelper
     $this->uploadDao = new UploadDao($this->dbHelper->getDbManager(), $this->logger, $this->uploadPermissionDao);
   }
 
-  public function doesUploadIdExist($id)
-  {
-    return true;
-  }
-
   public function getUserId()
   {
     return 3;
@@ -62,8 +57,7 @@ class RestHelper
     $contentDispositionString = trim($cutString[1]);
     $contentTypeString = trim($cutString[2]);
 
-
-    $filename = explode("filename=", $contentDispositionString)[1];
+    $filename = explode("filename=", str_replace("\"", "",$contentDispositionString))[1];
     $contentTypeCut = explode("Content-Type:", $contentTypeString)[1];
     $content = $this->stringHelper->getContentBetweenString($rawOutput, array(0,1,2,3), $webKitBoundaryString);
     return new File($filename, $contentTypeCut, $content);

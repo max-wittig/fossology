@@ -45,5 +45,9 @@ class DbHelper
     return $this->PG_CONN;
   }
 
+  public function doesUploadIdExist($id)
+  {
+    return (0 < (intval($this->getDbManager()->getSingleRow("SELECT COUNT(*) FROM upload WHERE upload_pk= ".pg_escape_string($id))["count"])));
+  }
 
 }
