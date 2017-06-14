@@ -30,13 +30,22 @@ $app['debug'] = true;
 $app->GET('/repo/api/v1/organize/uploads/{id}', function (Application $app, Request $request, $id)
 {
   $restHelper = new RestHelper();
+  $dbHelper = new DbHelper();
 
   if($restHelper->hasUserAccess("SIMPLE_API_KEY"))
   {
     //get the id from the fossology user
-    if (is_integer($id))
+    if (is_numeric($id))
     {
-      return new Response($restHelper->getFolderHelper()->getUploads($restHelper->getUserId(), $id));
+      if($dbHelper->doesUploadIdExist($id))
+      {
+        return new Response($restHelper->getFolderHelper()->getUploads($restHelper->getUserId(), $id));
+      }
+      else
+      {
+        $error = new Info(404, "File does not exist", InfoType::ERROR);
+        return new Response($error->getJSON(), $error->getCode());
+      }
     }
     else
     {
