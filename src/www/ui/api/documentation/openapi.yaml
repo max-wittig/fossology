@@ -192,7 +192,66 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Info'
-
+  /search:
+      get:
+        tags:
+          - Search
+        parameters:
+          - name: searchType
+            # use default, if not given
+            required: false
+            description: Limit search to
+            in: header
+            type: string
+            enum:
+              - directory
+              - containers
+              - all
+          - name: filename
+            description: Filename to find
+            required: false
+            in: header
+            type: string
+          - name: tag
+            description: Tag to find
+            required: false
+            in: header
+            type: string
+          - name: filesize_min
+            description: Min filesize in bytes
+            required: false
+            in: header
+            type: number
+          - name: filesize_max
+            description: Max filesize in bytes
+            required: false
+            in: header
+            type: number
+          - name: license
+            description: License search filter
+            required: false
+            in: header
+            type: string
+          - name: copyright
+            description: Copyright search filter
+            required: false
+            in: header
+            type: string
+        responses:
+          200:
+            description: OK
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/Upload'
+          400:
+            description: Bad request, at least 1 parameter must be provider for search
+            schema:
+              $ref: '#/definitions/Error'
+          401:
+            description: Unauthorized, no authentification provided
+            schema:
+              $ref: '#/definitions/Error'
 definitions:
   Upload:
     type: object

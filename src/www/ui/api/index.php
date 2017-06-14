@@ -157,7 +157,7 @@ $app->DELETE('/repo/api/v1/organize/uploads/{id}', function (Application $app, R
 
 $app->GET('/repo/api/v1/search/', function(Application $app, Request $request)
 {
-  $limit = $request->headers->get("limit");
+  $searchType = $request->headers->get("searchType");
   $filename = $request->headers->get("filename");
   $tag = $request->headers->get("tag");
   $filesize_min = $request->headers->get("filesize_min");
@@ -165,13 +165,21 @@ $app->GET('/repo/api/v1/search/', function(Application $app, Request $request)
   $license = $request->headers->get("license");
   $copyright = $request->headers->get("copyright");
 
+  if(!isset($searchType) && !isset($filename) && !isset($tag) && !isset($filesize_min)
+    && !isset($filesize_max) && !isset($license) && !isset($copyright))
+  {
+    $error = new Info(400, "Bad Request. At least one parameter is required",
+      InfoType::ERROR);
+    return new Response($error->getJSON(), $error->getCode());
+  }
+
   $restHelper = new RestHelper();
   $dbHelper = new DbHelper();
 
   $item = GetParm("item",PARM_INTEGER);
-  $results = GetResults($item, $filename, $tag, NULL, $filesize_min, $filesize_max, NULL,
+  $results = GetResults($item, $filename, $tag, 0, $filesize_min, $filesize_max, $searchType,
     $license, $copyright, $restHelper->getUploadDao(), $restHelper->getGroupId(), $dbHelper->getPGCONN());
-  return new Response(json_encode($results));
+  return new Response(json_encode($results, JSON_PRETTY_PRINT));
 });
 
 $app->run();

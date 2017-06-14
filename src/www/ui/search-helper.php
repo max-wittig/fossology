@@ -9,6 +9,11 @@
  * @param $SizeMin  int - Minimum file size, -1 if unused
  * @param $SizeMax  int - Maximum file size, -1 if unused
  * @param $searchtype "containers", "directory" or "allfiles"
+ * @param $License string
+ * @param $Copyright string
+ * @param $uploadDao \Fossology\Lib\Dao\UploadDao
+ * @param $groupID int
+ * @param $PG_CONN string
  * @return array of uploadtree recs.  Each record contains uploadtree_pk, parent,
  *         upload_fk, pfile_fk, ufile_mode, and ufile_name
  */
