@@ -12,9 +12,9 @@
  * @return array of uploadtree recs.  Each record contains uploadtree_pk, parent,
  *         upload_fk, pfile_fk, ufile_mode, and ufile_name
  */
-function GetResults($Item, $Filename, $tag, $Page, $SizeMin, $SizeMax, $searchtype, $License, $Copyright)
+function GetResults($Item, $Filename, $tag, $Page, $SizeMin, $SizeMax, $searchtype,
+                    $License, $Copyright, $uploadDao, $groupID, $PG_CONN)
 {
-  global $PG_CONN;
   $MaxPerPage  = 100;  /* maximum number of result items per page */
   $UploadtreeRecs = array();  // uploadtree record array to return
   $NeedTagfileTable = true;
@@ -23,7 +23,7 @@ function GetResults($Item, $Filename, $tag, $Page, $SizeMin, $SizeMax, $searchty
   if ($Item)
   {
     /* Find lft and rgt bounds for this $Uploadtree_pk  */
-    $row = $this->uploadDao->getUploadEntry($Item);
+    $row = $uploadDao->getUploadEntry($Item);
     if (empty($row))
     {
       $text = _("Invalid URL, nonexistant item");
@@ -34,7 +34,7 @@ function GetResults($Item, $Filename, $tag, $Page, $SizeMin, $SizeMax, $searchty
     $upload_pk = $row["upload_fk"];
 
     /* Check upload permission */
-    if (!$this->uploadDao->isAccessible($upload_pk, Auth::getGroupId())) {
+    if (!$uploadDao->isAccessible($upload_pk, $groupID)) {
       return $UploadtreeRecs;
     }
   }
@@ -198,16 +198,16 @@ function GetResults($Item, $Filename, $tag, $Page, $SizeMin, $SizeMax, $searchty
     }
   }
 
-  $Offset = $Page * $this->MaxPerPage;
+  $Offset = $Page * $MaxPerPage;
   $SQL .= " ORDER BY ufile_name, uploadtree.pfile_fk";
-  $SQL .= " LIMIT $this->MaxPerPage OFFSET $Offset;";
+  $SQL .= " LIMIT $MaxPerPage OFFSET $Offset;";
   $result = pg_query($PG_CONN, $SQL);
   DBCheckResult($result, $SQL, __FILE__, __LINE__);
   if (pg_num_rows($result))
   {
     while ($row = pg_fetch_assoc($result))
     {
-      if (!$this->uploadDao->isAccessible($row['upload_fk'], Auth::getGroupId())) {
+      if (!$uploadDao->isAccessible($row['upload_fk'], $groupID)) {
         continue;
       }
       $UploadtreeRecs[] = $row;

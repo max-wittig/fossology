@@ -165,10 +165,13 @@ $app->GET('/repo/api/v1/search/', function(Application $app, Request $request)
   $license = $request->headers->get("license");
   $copyright = $request->headers->get("copyright");
 
-  $search = new Search($limit, $filename, $tag, $filesize_min, $filesize_max, $license, $copyright);
-  $item = GetParm("item",PARM_INTEGER);
-  return new Response(GetResults($item, $filename, $tag, -1, $filesize_min, $filesize_max, null, $license, $copyright));
-});
+  $restHelper = new RestHelper();
+  $dbHelper = new DbHelper();
 
+  $item = GetParm("item",PARM_INTEGER);
+  $results = GetResults($item, $filename, $tag, NULL, $filesize_min, $filesize_max, NULL,
+    $license, $copyright, $restHelper->getUploadDao(), $restHelper->getGroupId(), $dbHelper->getPGCONN());
+  return new Response(json_encode($results));
+});
 
 $app->run();
