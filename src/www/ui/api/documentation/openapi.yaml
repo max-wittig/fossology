@@ -217,12 +217,12 @@ paths:
             required: false
             in: header
             type: string
-          - name: filesize_min
+          - name: filesizemin
             description: Min filesize in bytes
             required: false
             in: header
             type: number
-          - name: filesize_max
+          - name: filesizemax
             description: Max filesize in bytes
             required: false
             in: header

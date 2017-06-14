@@ -158,36 +158,52 @@ $app->GET('/repo/api/v1/search/', function(Application $app, Request $request)
 {
   $restHelper = new RestHelper();
 
+  //check user access to search
   if($restHelper->hasUserAccess("SIMPLE_KEY"))
   {
     $searchType = $request->headers->get("searchType");
     $filename = $request->headers->get("filename");
     $tag = $request->headers->get("tag");
-    $filesize_min = $request->headers->get("filesize_min");
-    $filesize_max = $request->headers->get("filesize_max");
+    $filesizeMin = $request->headers->get("filesizemin");
+    $filesizeMax = $request->headers->get("filesizemax");
     $license = $request->headers->get("license");
     $copyright = $request->headers->get("copyright");
 
     //set searchtype to search allfiles by default
-    if (!isset($searchType))
+    if (!isset($search_type))
     {
       $searchType = "allfiles";
     }
 
-    if (!isset($filename) && !isset($tag) && !isset($filesize_min)
-      && !isset($filesize_max) && !isset($license) && !isset($copyright)
-    )
+    /**
+     * check if at least one parameter was given
+     */
+    if (!isset($filename) && !isset($tag) && !isset($filesizeMin)
+      && !isset($filesizeMax) && !isset($license) && !isset($copyright))
     {
       $error = new Info(400, "Bad Request. At least one parameter is required",
         InfoType::ERROR);
       return new Response($error->getJSON(), $error->getCode());
     }
 
+    /**
+     * check if filesizeMin && filesizeMax are numeric, if existing
+     */
+    if(isset($filesizeMax) || isset($filesizeMin))
+    {
+      if (!is_numeric($filesizeMin) && !is_numeric($filesizeMax))
+      {
+        $error = new Info(400, "Bad Request. filesizemin and filesizemax need to be numeric",
+          InfoType::ERROR);
+        return new Response($error->getJSON(), $error->getCode());
+      }
+    }
+
     $restHelper = new RestHelper();
     $dbHelper = new DbHelper();
 
     $item = GetParm("item", PARM_INTEGER);
-    $results = GetResults($item, $filename, $tag, 0, $filesize_min, $filesize_max, $searchType,
+    $results = GetResults($item, $filename, $tag, 0, $filesizeMin, $filesizeMax, $searchType,
       $license, $copyright, $restHelper->getUploadDao(), $restHelper->getGroupId(), $dbHelper->getPGCONN());
     return new Response(json_encode($results, JSON_PRETTY_PRINT));
   }
