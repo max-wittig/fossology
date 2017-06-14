@@ -33,11 +33,24 @@ class RestHelper
     $this->uploadDao = new UploadDao($this->dbHelper->getDbManager(), $this->logger, $this->uploadPermissionDao);
   }
 
+  public function hasUserAccess($apiKey)
+  {
+    $this->authorizeUser("fossy", "fossy");
+    return true;
+  }
+
+  public function authorizeUser($username, $password)
+  {
+    //TODO provide OAuth to user
+    $_SESSION['UserLevel'] = $username;
+    define("PLUGIN_DB_ADMIN",0);
+    $_SESSION['api_key'] = "SIMPLE_API_KEY";
+  }
+
   public function getUserId()
   {
     //TODO provide some way for the user to authorize!
     //Currently user fossy is logged in id=3
-    define("PLUGIN_DB_ADMIN",0);
     return 3;
   }
 
@@ -59,7 +72,7 @@ class RestHelper
   {
     $cutString = explode("\n",$rawOutput);
     $webKitBoundaryString = trim(str_replace("-", "",$cutString[0]));
-    $contentDispositionString = trim($cutString[1]);
+    $contentDispositionString = trim(str_replace("-", "",$cutString[1]));
     $contentTypeString = trim($cutString[2]);
 
     $filename = explode("filename=", str_replace("\"", "",$contentDispositionString))[1];

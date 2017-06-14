@@ -10,7 +10,7 @@ host: localhost
 schemes:
   - https
 # will be prefixed to all paths
-basePath: /v1
+basePath: /repo/api/v1
 securityDefinitions:
   UserSecurity:
     type: apiKey
@@ -76,6 +76,22 @@ paths:
           description: Upload will be deleted
           schema:
             $ref: '#/definitions/Info'
+        400:
+          description: Bad request, id NaN etc.
+          schema:
+            $ref: '#/definitions/Info'
+        401:
+          description: Unauthorized, no authentification provided
+          schema:
+            $ref: '#/definitions/Info'
+        403:
+          description: Forbidden, no access to upload
+          schema:
+            $ref: '#/definitions/Info'
+        404:
+          description: Not found
+          schema:
+            $ref: '#/definitions/Info'
     patch:
       tags:
         - Upload
@@ -94,6 +110,22 @@ paths:
       responses:
         202:
           description: Upload will be moved
+          schema:
+            $ref: '#/definitions/Info'
+        400:
+          description: Bad request, id NaN etc.
+          schema:
+            $ref: '#/definitions/Info'
+        401:
+          description: Unauthorized, no authentification provided
+          schema:
+            $ref: '#/definitions/Info'
+        403:
+          description: Forbidden, no access to upload
+          schema:
+            $ref: '#/definitions/Info'
+        404:
+          description: Not found
           schema:
             $ref: '#/definitions/Info'
     put:

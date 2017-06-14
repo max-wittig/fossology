@@ -5,7 +5,10 @@ include_once "../../../delagent/ui/delete-helper.php";
 include_once "models/InfoType.php";
 include_once "models/Info.php";
 include_once "helper/DbHelper.php";
+include_once "models/Search.php";
+include_once "/usr/local/share/fossology/www/ui/search-helper.php";
 
+//TODO: REMOVE ERROR_DISPLAY
 use Symfony\Component\HttpKernel\Debug\ErrorHandler;
 ini_set('display_errors', 1);
 error_reporting(-1);
@@ -18,64 +21,154 @@ use Silex\Application;
 use api\models\Info;
 use \www\ui\api\models\InfoType;
 use \www\ui\api\helper\DbHelper;
+use www\ui\api\models\Search;
 
 $app = new Silex\Application();
 $app['debug'] = true;
-$_SESSION['UserLevel'] = "fossy";
+
+////////////////////////////UPLOADS/////////////////////
 
 $app->GET('/repo/api/v1/organize/uploads/{id}', function (Application $app, Request $request, $id)
 {
   $restHelper = new RestHelper();
-  //get the id from the fossology user
-  if(is_integer($id))
+
+  if($restHelper->hasUserAccess("SIMPLE_API_KEY"))
   {
-    return new Response(json_encode($restHelper->getFolderHelper()->getUploads($restHelper->getUserId(), $id), JSON_PRETTY_PRINT));
+    //get the id from the fossology user
+    if (is_integer($id))
+    {
+      return new Response($restHelper->getFolderHelper()->getUploads($restHelper->getUserId(), $id));
+    }
+    else
+    {
+      $error = new Info(400, "Bad Request. $id is not a number!", InfoType::ERROR);
+      return new Response($error->getJSON());
+    }
   }
   else
   {
-    $error = new Info(400, "Bad Request. $id is not a number!", InfoType::ERROR);
-    return new Response($error->getJSON());
+    $error = new Info(403, "No authorized to GET upload with id " . $id, InfoType::ERROR);
+    return new Response($error->getJSON(), $error->getCode());
   }
-
 });
 
 $app->PATCH('/repo/api/v1/organize/uploads/{id}', function (Application $app, Request $request, $id)
 {
-  return new Response('How about implementing organizeUploadsIdPatch as a PATCH method ?');
+  $restHelper = new RestHelper();
+
+  if($restHelper->hasUserAccess("SIMPLE_KEY"))
+  {
+    if (is_integer($id))
+    {
+      return new Response("TODO");
+      //TODO implement patch method
+    }
+    else
+    {
+      $error = new Info(400, "Bad Request. $id is not a number!", InfoType::ERROR);
+      return new Response($error->getJSON());
+    }
+  }
+  else
+  {
+    $error = new Info(403, "No authorized to PATCH upload with id " . $id, InfoType::ERROR);
+    return new Response($error->getJSON(), $error->getCode());
+  }
+
 });
 
 $app->PUT('/repo/api/v1/organize/uploads/', function (Application $app, Request $request)
 {
+
   $restHelper = new RestHelper();
-  $filteredFile = $restHelper->getFilteredFile($request->getContent());
-  return new Response($filteredFile->getJSON());
+
+  if($restHelper->hasUserAccess("SIMPLE_KEY"))
+  {
+    try
+    {
+      $put = array();
+      parse_str(file_get_contents('php://input'), $put);
+      return new Response("fdsfds");
+    }
+    catch (Exception $e)
+    {
+      $error = new Info(400, "Bad Request. Invalid Input", InfoType::ERROR);
+      return new Response($error->getJSON(),$error->getCode());
+    }
+  }
+  else
+  {
+    $error = new Info(403, "No authorized to PUT upload", InfoType::ERROR);
+    return new Response($error->getJSON(), $error->getCode());
+  }
 });
 
-$app->GET('/repo/api/v1/organize/uploads', function (Application $app, Request $request)
+$app->GET('/repo/api/v1/organize/uploads/', function (Application $app, Request $request)
 {
   $restHelper = new RestHelper();
-  //get the id from the fossology user
-  return new Response(json_encode($restHelper->getFolderHelper()->getUploads($restHelper->getUserId())));
-});
 
+  if($restHelper->hasUserAccess("SIMPLE_KEY"))
+  {
+    //get the id from the fossology user
+    return new Response($restHelper->getFolderHelper()->getUploads($restHelper->getUserId()));
+  }
+  else
+  {
+    $error = new Info(403, "No authorized to PUT upload", InfoType::ERROR);
+    return new Response($error->getJSON(), $error->getCode());
+  }
+});
 
 $app->DELETE('/repo/api/v1/organize/uploads/{id}', function (Application $app, Request $request, $id)
 {
   $restHelper = new RestHelper();
   $dbHelper = new DbHelper();
-
-  if ($dbHelper->doesUploadIdExist($id))
+  $id = intval($id);
+  if($restHelper->hasUserAccess("SIMPLE_KEY"))
   {
-    TryToDelete($id, $restHelper->getUserId(), $restHelper->getGroupId(), $restHelper->getUploadDao());
-    $info = new Info(202, "Delete Job for file with id " . $id, InfoType::INFO);
-    return new Response($info->getJSON(), $info->getCode());
+    if (is_integer($id))
+    {
+      if ($dbHelper->doesUploadIdExist($id))
+      {
+        TryToDelete($id, $restHelper->getUserId(), $restHelper->getGroupId(), $restHelper->getUploadDao());
+        $info = new Info(202, "Delete Job for file with id " . $id, InfoType::INFO);
+        return new Response($info->getJSON(), $info->getCode());
+      }
+      else
+      {
+        $error = new Info(404, "Id " . $id . " doesn't exist", InfoType::ERROR);
+        return new Response($error->getJSON(), $error->getCode());
+      }
+    }
+    else
+    {
+      $error = new Info(400, "Bad Request. $id is not a number!", InfoType::ERROR);
+      return new Response($error->getJSON());
+    }
   }
   else
   {
-    $error = new Info(404, "Id " . $id . " doesn't exist", InfoType::ERROR);
+    $error = new Info(403, "No authorized to PUT upload", InfoType::ERROR);
     return new Response($error->getJSON(), $error->getCode());
   }
-
 });
+
+////////////////////////////SEARCH/////////////////////
+
+$app->GET('/repo/api/v1/search/', function(Application $app, Request $request)
+{
+  $limit = $request->headers->get("limit");
+  $filename = $request->headers->get("filename");
+  $tag = $request->headers->get("tag");
+  $filesize_min = $request->headers->get("filesize_min");
+  $filesize_max = $request->headers->get("filesize_max");
+  $license = $request->headers->get("license");
+  $copyright = $request->headers->get("copyright");
+
+  $search = new Search($limit, $filename, $tag, $filesize_min, $filesize_max, $license, $copyright);
+  $item = GetParm("item",PARM_INTEGER);
+  return new Response(GetResults($item, $filename, $tag, -1, $filesize_min, $filesize_max, null, $license, $copyright));
+});
+
 
 $app->run();

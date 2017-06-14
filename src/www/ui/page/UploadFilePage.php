@@ -152,7 +152,7 @@ class UploadFilePage extends UploadPageBase
     }
     
     $message = $this->postUploadAddJobs($request, $originalFileName, $uploadId);
-        
+
     return array(true, $message, $description);
   }
 

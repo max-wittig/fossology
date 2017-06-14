@@ -54,7 +54,7 @@ FROM upload, folderlist, folder, pfile
       array_push($uploads, $upload);
     }
     pg_free_result($result);
-    return $uploads;
+    return json_encode($uploads, JSON_PRETTY_PRINT);
   }
 
   /**
