@@ -32,6 +32,7 @@ $app->GET('/repo/api/v1/organize/uploads/{id}', function (Application $app, Requ
   $restHelper = new RestHelper();
   $dbHelper = new DbHelper();
 
+  //checks if user has access to this functionality
   if($restHelper->hasUserAccess("SIMPLE_API_KEY"))
   {
     //get the id from the fossology user
@@ -223,5 +224,11 @@ $app->GET('/repo/api/v1/search/', function(Application $app, Request $request)
     return new Response($error->getJSON(), $error->getCode());
   }
 });
+
+$app->GET('/repo/api/admin/users/', function(Application $app, Request $request)
+{
+
+});
+
 
 $app->run();
