@@ -108,6 +108,7 @@ class search extends FO_Plugin
    */
   function Output()
   {
+    global $PG_CONN;
     if ($this->State != PLUGIN_STATE_READY) { return; }
     if ($this->OutputType != 'HTML') { return; }
 
@@ -198,7 +199,7 @@ class search extends FO_Plugin
       $html = "<hr>\n";
       $text = _("Files matching");
       $html .= "<H2>$text " . htmlentities($Filename) . "</H2>\n";
-      $UploadtreeRecs = GetResults($Item,$Filename,$tag,$Page,$SizeMin,$SizeMax,$searchtype,$License, $Copyright, $this->uploadDao, Auth::getGroupId(), 0);
+      $UploadtreeRecs = GetResults($Item,$Filename,$tag,$Page,$SizeMin,$SizeMax,$searchtype,$License, $Copyright, $this->uploadDao, Auth::getGroupId(), $PG_CONN);
       $html .= $this->HTMLResults($UploadtreeRecs, $Page, $GETvars, $License, $Copyright);
       $this->vars["result"] = $html;
     }

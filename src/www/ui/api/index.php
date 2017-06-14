@@ -21,7 +21,6 @@ use Silex\Application;
 use api\models\Info;
 use \www\ui\api\models\InfoType;
 use \www\ui\api\helper\DbHelper;
-use www\ui\api\models\Search;
 
 $app = new Silex\Application();
 $app['debug'] = true;
@@ -148,7 +147,7 @@ $app->DELETE('/repo/api/v1/organize/uploads/{id}', function (Application $app, R
   }
   else
   {
-    $error = new Info(403, "No authorized to PUT upload", InfoType::ERROR);
+    $error = new Info(403, "Not authorized to PUT upload", InfoType::ERROR);
     return new Response($error->getJSON(), $error->getCode());
   }
 });
@@ -157,29 +156,47 @@ $app->DELETE('/repo/api/v1/organize/uploads/{id}', function (Application $app, R
 
 $app->GET('/repo/api/v1/search/', function(Application $app, Request $request)
 {
-  $searchType = $request->headers->get("searchType");
-  $filename = $request->headers->get("filename");
-  $tag = $request->headers->get("tag");
-  $filesize_min = $request->headers->get("filesize_min");
-  $filesize_max = $request->headers->get("filesize_max");
-  $license = $request->headers->get("license");
-  $copyright = $request->headers->get("copyright");
+  $restHelper = new RestHelper();
 
-  if(!isset($searchType) && !isset($filename) && !isset($tag) && !isset($filesize_min)
-    && !isset($filesize_max) && !isset($license) && !isset($copyright))
+  if($restHelper->hasUserAccess("SIMPLE_KEY"))
   {
-    $error = new Info(400, "Bad Request. At least one parameter is required",
-      InfoType::ERROR);
+    $searchType = $request->headers->get("searchType");
+    $filename = $request->headers->get("filename");
+    $tag = $request->headers->get("tag");
+    $filesize_min = $request->headers->get("filesize_min");
+    $filesize_max = $request->headers->get("filesize_max");
+    $license = $request->headers->get("license");
+    $copyright = $request->headers->get("copyright");
+
+    //set searchtype to search allfiles by default
+    if (!isset($searchType))
+    {
+      $searchType = "allfiles";
+    }
+
+    if (!isset($filename) && !isset($tag) && !isset($filesize_min)
+      && !isset($filesize_max) && !isset($license) && !isset($copyright)
+    )
+    {
+      $error = new Info(400, "Bad Request. At least one parameter is required",
+        InfoType::ERROR);
+      return new Response($error->getJSON(), $error->getCode());
+    }
+
+    $restHelper = new RestHelper();
+    $dbHelper = new DbHelper();
+
+    $item = GetParm("item", PARM_INTEGER);
+    $results = GetResults($item, $filename, $tag, 0, $filesize_min, $filesize_max, $searchType,
+      $license, $copyright, $restHelper->getUploadDao(), $restHelper->getGroupId(), $dbHelper->getPGCONN());
+    return new Response(json_encode($results, JSON_PRETTY_PRINT));
+  }
+  else
+  {
+    //401 because every user can search. Only not logged in user can't
+    $error = new Info(401, "Not authorized to search", InfoType::ERROR);
     return new Response($error->getJSON(), $error->getCode());
   }
-
-  $restHelper = new RestHelper();
-  $dbHelper = new DbHelper();
-
-  $item = GetParm("item",PARM_INTEGER);
-  $results = GetResults($item, $filename, $tag, 0, $filesize_min, $filesize_max, $searchType,
-    $license, $copyright, $restHelper->getUploadDao(), $restHelper->getGroupId(), $dbHelper->getPGCONN());
-  return new Response(json_encode($results, JSON_PRETTY_PRINT));
 });
 
 $app->run();

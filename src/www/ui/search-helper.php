@@ -13,7 +13,7 @@
  * @param $Copyright string
  * @param $uploadDao \Fossology\Lib\Dao\UploadDao
  * @param $groupID int
- * @param $PG_CONN string
+ * @param $PG_CONN resource
  * @return array of uploadtree recs.  Each record contains uploadtree_pk, parent,
  *         upload_fk, pfile_fk, ufile_mode, and ufile_name
  */

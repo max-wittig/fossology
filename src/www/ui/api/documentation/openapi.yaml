@@ -198,7 +198,7 @@ paths:
           - Search
         parameters:
           - name: searchType
-            # use default, if not given
+            # use 'allfiles', if not given
             required: false
             description: Limit search to
             in: header
@@ -206,9 +206,9 @@ paths:
             enum:
               - directory
               - containers
-              - all
+              - allfiles
           - name: filename
-            description: Filename to find
+            description: Filename to find, can contain % as wild-card
             required: false
             in: header
             type: string
