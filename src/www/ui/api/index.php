@@ -13,7 +13,6 @@ ini_set('display_errors', 1);
 error_reporting(-1);
 ErrorHandler::register();
 
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
@@ -39,7 +38,7 @@ $app->GET('/repo/api/v1/organize/uploads/{id}', function (Application $app, Requ
     {
       if($dbHelper->doesUploadIdExist($id))
       {
-        return new Response($restHelper->getFolderHelper()->getUploads($restHelper->getUserId(), $id));
+        return new Response($dbHelper->getUploads($restHelper->getUserId(), $id));
       }
       else
       {
