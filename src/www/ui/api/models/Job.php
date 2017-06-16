@@ -10,31 +10,41 @@ class Job
 {
   private $id;
   private $name;
-  private $status;
+  private $queueDate;
+  private $uploadId;
 
   /**
    * Job constructor.
-   * @param $id
-   * @param $name
-   * @param $status
+   * @param $id integer
+   * @param $name string
+   * @param $queueDate string
+   * @param $uploadId integer
+   * @param $userId integer
+   * @param $groupId integer
    */
-  public function __construct($id, $name, $status)
+  public function __construct($id, $name, $queueDate, $uploadId, $userId, $groupId)
   {
     $this->id = $id;
     $this->name = $name;
-    $this->status = $status;
+    $this->queueDate = $queueDate;
+    $this->uploadId = $uploadId;
+    $this->userId = $userId;
+    $this->groupId = $groupId;
   }
 
   /**
-   * @return string
+   * @return array
    */
   public function getJSON()
   {
-    return json_encode(array(
+    return array(
       'id' => $this->id,
       'name' => $this->name,
-      'status' => $this->status
-    ));
+      'queueDate' => $this->queueDate,
+      'uploadId' => $this->uploadId,
+      'userId' => $this->userId,
+      'groupId' => $this->groupId
+    );
   }
 
 }

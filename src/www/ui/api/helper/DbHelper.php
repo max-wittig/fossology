@@ -5,13 +5,17 @@ namespace www\ui\api\helper;
 
 require_once "/usr/local/share/fossology/www/ui/api/models/Upload.php";
 require_once "/usr/local/share/fossology/www/ui/api/models/User.php";
+require_once "/usr/local/share/fossology/www/ui/api/models/Job.php";
 
+use api\models\Info;
 use Fossology\Lib\Db\ModernDbManager;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use Fossology\Lib\Db\Driver\Postgres;
 use api\models\Upload;
+use www\ui\api\models\InfoType;
 use www\ui\api\models\User;
+use www\ui\api\models\Job;
 
 
 class DbHelper
@@ -124,6 +128,33 @@ FROM upload, folderlist, folder, pfile
     }
 
     return json_encode($users, JSON_PRETTY_PRINT);
+  }
+
+  public function getJobs($limit = 0, $id = NULL)
+  {
+    if($id == NULL)
+    {
+      $jobSQL = "SELECT job_pk, job_queued, job_name, job_upload_fk, job_user_fk, job_group_fk FROM job ";
+      if($limit > 0)
+      {
+        $jobSQL .= "LIMIT " . pg_escape_string($limit);
+      }
+    }
+    else
+    {
+      $jobSQL = "SELECT job_pk, job_queued, job_name, job_upload_fk, job_user_fk, job_group_fk FROM job";
+    }
+
+    $result = pg_query($this->getPGCONN(), $jobSQL);
+    $jobs = [];
+    while ($row = pg_fetch_assoc($result))
+    {
+      $job = new Job($row["job_pk"], $row["job_name"], $row["job_queued"],
+        $row["job_upload_fk"], $row["job_user_fk"], $row["job_group_fk"]);
+      $jobs[] = $job->getJSON();
+    }
+    pg_free_result($result);
+    return json_encode($jobs, JSON_PRETTY_PRINT);
   }
 
 }

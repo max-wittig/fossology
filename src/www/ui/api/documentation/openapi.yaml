@@ -272,6 +272,37 @@ paths:
             description: Forbidden, no access to all users
             schema:
               $ref: '#/definitions/Info'
+  /jobs:
+      get:
+        tags:
+        - Job
+        summary: Gets all jobs
+        description: Returns all jobs with their status
+        parameters:
+          - name: limit
+            required: false
+            type: number
+            format: int
+            in: header
+        responses:
+          200:
+            description: OK
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/Job'
+          400:
+            description: Bad request
+            schema:
+              $ref: '#/definitions/Info'
+          401:
+            description: Unauthorized, no authentification provided
+            schema:
+              $ref: '#/definitions/Info'
+          403:
+            description: Forbidden, no access to jobs
+            schema:
+              $ref: '#/definitions/Info'
 definitions:
   Upload:
     type: object
@@ -296,6 +327,18 @@ definitions:
       file_size:
         type: number
         description: Filesize in Bytes.
+  Job:
+    type: object
+    properties:
+      job_id:
+        type: number
+        format: int
+      status:
+        type: string
+      filename:
+        type: string
+      eta:
+        type: string
   Info:
     type: object
     properties:
@@ -321,7 +364,7 @@ definitions:
       email:
         type: string
         description: email of the user, needs to be unique and is required
-      access:
+      accessLevel:
         type: string
         enum:
           - none
@@ -335,7 +378,7 @@ definitions:
       password:
         type: string
         description: password of the user. This will be null, if not needed
-      email_notification:
+      emailNotification:
         type: boolean
         description: enable email notification when upload scan completes
       agents:
