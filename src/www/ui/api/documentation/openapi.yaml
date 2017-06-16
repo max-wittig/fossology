@@ -247,11 +247,31 @@ paths:
           400:
             description: Bad request, at least 1 parameter must be provider for search
             schema:
-              $ref: '#/definitions/Error'
+              $ref: '#/definitions/Info'
           401:
             description: Unauthorized, no authentification provided
             schema:
-              $ref: '#/definitions/Error'
+              $ref: '#/definitions/Info'
+  /admin/users:
+      get:
+        tags:
+          - User
+          - Admin
+        responses:
+          200:
+            description: OK
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/Info'
+          401:
+            description: Unauthorized, no authentification provided
+            schema:
+              $ref: '#/definitions/Info'
+          403:
+            description: Forbidden, no access to all users
+            schema:
+              $ref: '#/definitions/Info'
 definitions:
   Upload:
     type: object
@@ -286,4 +306,67 @@ definitions:
         type: string
       type:
         type: string
-
+  User:
+    type: object
+    properties:
+      id:
+        type: string
+        description: id of the user
+      name:
+        type: string
+        description: username
+      description:
+        type: string
+        description: description of the user
+      email:
+        type: string
+        description: email of the user, needs to be unique and is required
+      access:
+        type: string
+        enum:
+          - none
+          - read_only
+          - read_write
+          - admin
+      root_folder_id:
+        type: number
+        format: int
+        description: root folder id of the user
+      password:
+        type: string
+        description: password of the user. This will be null, if not needed
+      email_notification:
+        type: boolean
+        description: enable email notification when upload scan completes
+      agents:
+        $ref: '#/definitions/Analysis'
+  Analysis:
+    type: object
+    properties:
+      bucket:
+        type: boolean
+        description: Should bucket analysis be run on this upload
+      copyright_email_author:
+        type: boolean
+        description: Should Copyright/Email/URL/Author Analysis be run on this upload.
+      ecc:
+        type: boolean
+        description: Should ECC Analysis be run on this upload.
+      ip:
+        type: boolean
+        description: Should IP Analysis be run on this upload.
+      keyword:
+        type: boolean
+        description: Should keyword Analysis be run on this upload.
+      mime:
+        type: boolean
+        description: Should MIME Analysis be run on this upload.
+      monk:
+        type: boolean
+        description: Should Monk Analysis be run on this upload.
+      nomos:
+        type: boolean
+        description: Should Nomos Analysis be run on this upload.
+      package:
+        type: boolean
+        description: Should Package Analysis be run on this upload.

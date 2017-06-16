@@ -227,6 +227,14 @@ $app->GET('/repo/api/v1/search/', function(Application $app, Request $request)
 
 $app->GET('/repo/api/admin/users/', function(Application $app, Request $request)
 {
+  $restHelper = new RestHelper();
+
+  //check user access to search
+  if($restHelper->hasUserAccess("SIMPLE_KEY"))
+  {
+
+  }
+
 
 });
 
