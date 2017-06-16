@@ -1,12 +1,10 @@
 <?php
 
-include_once "FolderHelper.php";
 include_once "StringHelper.php";
 include_once '/usr/local/share/fossology/www/ui/api/models/File.php';
 
 use \Fossology\Lib\Dao\UploadPermissionDao;
 use \Fossology\Lib\Dao\UploadDao;
-use www\ui\api\FolderHelper;
 use Monolog\Logger;
 use www\ui\api\helper\DbHelper;
 use \www\ui\api\models\File;
@@ -14,7 +12,6 @@ use \www\ui\api\helper\StringHelper;
 
 class RestHelper
 {
-  private $folderHelper;
   private $stringHelper;
   private $logger;
   private $uploadDao;
@@ -26,16 +23,19 @@ class RestHelper
   public function __construct()
   {
     $this->dbHelper = new DbHelper();
-    $this->folderHelper = new FolderHelper();
     $this->stringHelper = new StringHelper();
     $this->logger = new Logger(__FILE__);
     $this->uploadPermissionDao = new UploadPermissionDao($this->dbHelper->getDbManager(), $this->logger);
     $this->uploadDao = new UploadDao($this->dbHelper->getDbManager(), $this->logger, $this->uploadPermissionDao);
   }
 
-  public function hasUserAccess($apiKey)
+  public function hasUserAccess($apiKey, $context = "default")
   {
     $this->authorizeUser("fossy", "fossy");
+    if($context == "admin")
+    {
+      //do something else
+    }
     return true;
   }
 

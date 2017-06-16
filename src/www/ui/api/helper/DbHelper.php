@@ -6,11 +6,14 @@ namespace www\ui\api\helper;
 include_once "/usr/local/share/fossology/www/ui/api/models/Upload.php";
 include_once "/usr/local/share/fossology/www/ui/api/models/User.php";
 
+use api\models\Info;
 use Fossology\Lib\Db\ModernDbManager;
+use Guzzle\Http\Message\Response;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use Fossology\Lib\Db\Driver\Postgres;
 use api\models\Upload;
+use www\ui\api\models\InfoType;
 use www\ui\api\models\User;
 
 
@@ -90,10 +93,23 @@ FROM upload, folderlist, folder, pfile
     return (0 < (intval($this->getDbManager()->getSingleRow("SELECT COUNT(*) FROM upload WHERE upload_pk= ".pg_escape_string($id))["count"])));
   }
 
-  public function getUsers()
+  public function doesUserIdExist($id)
   {
-    $usersSQL = "SELECT user_pk, user_name, user_desc, user_email, 
+    return (0 < (intval($this->getDbManager()->getSingleRow("SELECT COUNT(*) FROM users WHERE user_pk= ".pg_escape_string($id))["count"])));
+  }
+
+  public function getUsers($id = NULL)
+  {
+    if($id == NULL)
+    {
+      $usersSQL = "SELECT user_pk, user_name, user_desc, user_email, 
                   email_notify, root_folder_fk, user_perm, user_agent_list FROM users";
+    }
+    else
+    {
+      $usersSQL = "SELECT user_pk, user_name, user_desc, user_email, 
+                email_notify, root_folder_fk, user_perm, user_agent_list FROM users WHERE user_pk=" . pg_escape_string($id);
+    }
     $users = [];
     $result = pg_query($this->getPGCONN(), $usersSQL);
     while ($row = pg_fetch_assoc($result))

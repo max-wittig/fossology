@@ -225,6 +225,8 @@ $app->GET('/repo/api/v1/search/', function(Application $app, Request $request)
   }
 });
 
+////////////////////////////ADMIN-USERS/////////////////////
+
 $app->GET('/repo/api/v1/admin/users/', function(Application $app, Request $request)
 {
   $restHelper = new RestHelper();
@@ -234,6 +236,43 @@ $app->GET('/repo/api/v1/admin/users/', function(Application $app, Request $reque
   {
     $users = $dbHelper->getUsers();
     return new Response($users, 200);
+  }
+  else
+  {
+    //401 because every user can search. Only not logged in user can't
+    $error = new Info(403, "Not authorized to access users", InfoType::ERROR);
+    return new Response($error->getJSON(), $error->getCode());
+  }
+
+
+});
+
+$app->GET('/repo/api/v1/admin/users/{id}', function(Application $app, Request $request, $id)
+{
+  $restHelper = new RestHelper();
+  $dbHelper = new DbHelper();
+  //check user access to search
+  if($restHelper->hasUserAccess("SIMPLE_KEY"))
+  {
+    if(is_numeric($id))
+    {
+      if($dbHelper->doesUserIdExist($id))
+      {
+        $users = $dbHelper->getUsers($id);
+        return new Response($users, 200);
+      }
+      else
+      {
+        $error = new Info(404, "UserId doesn't exist", InfoType::ERROR);
+        return new Response($error->getJSON(), $error->getCode());
+      }
+
+    }
+    else
+    {
+      $error = new Info(400, "Bad request. $id is not a number!", InfoType::ERROR);
+      return new Response($error->getJSON(), $error->getCode());
+    }
   }
   else
   {
