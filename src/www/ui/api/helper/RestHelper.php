@@ -1,7 +1,7 @@
 <?php
 
-include_once "StringHelper.php";
-include_once '/usr/local/share/fossology/www/ui/api/models/File.php';
+require_once "StringHelper.php";
+require_once '/usr/local/share/fossology/www/ui/api/models/File.php';
 
 use \Fossology\Lib\Dao\UploadPermissionDao;
 use \Fossology\Lib\Dao\UploadDao;
@@ -45,6 +45,7 @@ class RestHelper
     $_SESSION['UserLevel'] = $username;
     define("PLUGIN_DB_ADMIN",0);
     $_SESSION['api_key'] = "SIMPLE_API_KEY";
+    $GLOBALS['SysConf']['auth'] = 3;
   }
 
   public function getUserId()

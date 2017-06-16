@@ -16,7 +16,7 @@ function TryToDelete($uploadpk, $user_pk, $group_pk, $uploadDao) {
     return DisplayMessage($text);
   }
 
-  $rc = Delete($uploadpk, $user_pk, $group_pk, NULL);
+  $rc = DeleteUpload($uploadpk, $user_pk, $group_pk, NULL);
 
   if (! empty($rc)) {
     $text=_("Deletion Scheduling failed: ");
@@ -40,7 +40,7 @@ function TryToDelete($uploadpk, $user_pk, $group_pk, $uploadDao) {
  * @param $dbManager - an instance of the db manager
  * @return NULL on success, string on failure.
  */
-function Delete($uploadpk, $user_pk, $group_pk, $Depends = NULL)
+function DeleteUpload($uploadpk, $user_pk, $group_pk, $Depends = NULL)
 {
   /* Prepare the job: job "Delete" */
   $jobpk = JobAddJob($user_pk, $group_pk, "Delete", $uploadpk);

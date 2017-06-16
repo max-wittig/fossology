@@ -3,17 +3,14 @@
 
 namespace www\ui\api\helper;
 
-include_once "/usr/local/share/fossology/www/ui/api/models/Upload.php";
-include_once "/usr/local/share/fossology/www/ui/api/models/User.php";
+require_once "/usr/local/share/fossology/www/ui/api/models/Upload.php";
+require_once "/usr/local/share/fossology/www/ui/api/models/User.php";
 
-use api\models\Info;
 use Fossology\Lib\Db\ModernDbManager;
-use Guzzle\Http\Message\Response;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use Fossology\Lib\Db\Driver\Postgres;
 use api\models\Upload;
-use www\ui\api\models\InfoType;
 use www\ui\api\models\User;
 
 
@@ -96,6 +93,12 @@ FROM upload, folderlist, folder, pfile
   public function doesUserIdExist($id)
   {
     return (0 < (intval($this->getDbManager()->getSingleRow("SELECT COUNT(*) FROM users WHERE user_pk= ".pg_escape_string($id))["count"])));
+  }
+
+  public function deleteUser($id)
+  {
+    require_once "/usr/local/share/fossology/www/ui/user-del-helper.php";
+    DeleteUser($id, $this->PG_CONN);
   }
 
   public function getUsers($id = NULL)

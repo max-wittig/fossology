@@ -1,11 +1,10 @@
 <?php
-include_once '/usr/local/share/fossology/vendor/autoload.php';
-include_once "helper/RestHelper.php";
-include_once "../../../delagent/ui/delete-helper.php";
-include_once "models/InfoType.php";
-include_once "models/Info.php";
-include_once "helper/DbHelper.php";
-include_once "/usr/local/share/fossology/www/ui/search-helper.php";
+require_once '/usr/local/share/fossology/vendor/autoload.php';
+require_once "helper/RestHelper.php";
+require_once "models/InfoType.php";
+require_once "models/Info.php";
+require_once "helper/DbHelper.php";
+require_once "/usr/local/share/fossology/www/ui/search-helper.php";
 
 //TODO: REMOVE ERROR_DISPLAY
 use Symfony\Component\HttpKernel\Debug\ErrorHandler;
@@ -129,6 +128,7 @@ $app->GET('/repo/api/v1/organize/uploads/', function (Application $app, Request 
 
 $app->DELETE('/repo/api/v1/organize/uploads/{id}', function (Application $app, Request $request, $id)
 {
+  require_once "../../../delagent/ui/delete-helper.php";
   $restHelper = new RestHelper();
   $dbHelper = new DbHelper();
   $id = intval($id);
@@ -283,5 +283,42 @@ $app->GET('/repo/api/v1/admin/users/{id}', function(Application $app, Request $r
 
 });
 
+$app->DELETE('/repo/api/v1/admin/users/{id}', function(Application $app, Request $request, $id)
+{
+  $restHelper = new RestHelper();
+  $dbHelper = new DbHelper();
+  //check user access to search
+  if($restHelper->hasUserAccess("SIMPLE_KEY"))
+  {
+    if(is_numeric($id))
+    {
+      if($dbHelper->doesUserIdExist($id))
+      {
+        $dbHelper->deleteUser($id);
+        $info = new Info(202, "User will be deleted", InfoType::INFO);
+        return new Response($info->getJSON(), $info->getCode());
+      }
+      else
+      {
+        $error = new Info(404, "UserId doesn't exist", InfoType::ERROR);
+        return new Response($error->getJSON(), $error->getCode());
+      }
+
+    }
+    else
+    {
+      $error = new Info(400, "Bad request. $id is not a number!", InfoType::ERROR);
+      return new Response($error->getJSON(), $error->getCode());
+    }
+  }
+  else
+  {
+    //401 because every user can search. Only not logged in user can't
+    $error = new Info(403, "Not authorized to access users", InfoType::ERROR);
+    return new Response($error->getJSON(), $error->getCode());
+  }
+
+
+});
 
 $app->run();
