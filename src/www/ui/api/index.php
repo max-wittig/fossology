@@ -5,7 +5,6 @@ include_once "../../../delagent/ui/delete-helper.php";
 include_once "models/InfoType.php";
 include_once "models/Info.php";
 include_once "helper/DbHelper.php";
-include_once "models/Search.php";
 include_once "/usr/local/share/fossology/www/ui/search-helper.php";
 
 //TODO: REMOVE ERROR_DISPLAY
@@ -115,11 +114,12 @@ $app->PUT('/repo/api/v1/organize/uploads/', function (Application $app, Request 
 $app->GET('/repo/api/v1/organize/uploads/', function (Application $app, Request $request)
 {
   $restHelper = new RestHelper();
+  $dbHelper = new DbHelper();
 
   if($restHelper->hasUserAccess("SIMPLE_KEY"))
   {
     //get the id from the fossology user
-    return new Response($restHelper->getFolderHelper()->getUploads($restHelper->getUserId()));
+    return new Response($dbHelper->getUploads($restHelper->getUserId()));
   }
   else
   {
@@ -225,14 +225,21 @@ $app->GET('/repo/api/v1/search/', function(Application $app, Request $request)
   }
 });
 
-$app->GET('/repo/api/admin/users/', function(Application $app, Request $request)
+$app->GET('/repo/api/v1/admin/users/', function(Application $app, Request $request)
 {
   $restHelper = new RestHelper();
-
+  $dbHelper = new DbHelper();
   //check user access to search
   if($restHelper->hasUserAccess("SIMPLE_KEY"))
   {
-
+    $users = $dbHelper->getUsers();
+    return new Response($users, 200);
+  }
+  else
+  {
+    //401 because every user can search. Only not logged in user can't
+    $error = new Info(403, "Not authorized to access users", InfoType::ERROR);
+    return new Response($error->getJSON(), $error->getCode());
   }
 
 

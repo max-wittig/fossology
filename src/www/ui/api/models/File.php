@@ -54,7 +54,7 @@ class File
   {
     return json_encode(array(
       'filename' => $this->filename,
-      'content-type' => $this->contentType,
+      'contentType' => $this->contentType,
       'fileContent' => $this->fileContent
     ));
   }

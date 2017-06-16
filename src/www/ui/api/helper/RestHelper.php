@@ -82,14 +82,6 @@ class RestHelper
   }
 
   /**
-   * @return FolderHelper
-   */
-  public function getFolderHelper()
-  {
-    return $this->folderHelper;
-  }
-
-  /**
    * @return \Monolog\Logger
    */
   public function getLogger()
