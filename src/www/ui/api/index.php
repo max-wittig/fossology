@@ -333,4 +333,25 @@ $app->GET('/repo/api/v1/jobs/', function(Application $app, Request $request)
   return new Response($dbHelper->getJobs($limit), 200);
 });
 
+$app->GET('/repo/api/v1/jobs/{id}', function(Application $app, Request $request, $id)
+{
+  $dbHelper = new DbHelper();
+  $limit = $request->headers->get("limit");
+  if(isset($limit) && (!is_numeric($limit) || $limit < 0))
+  {
+    $error = new Info(400, "Limit cannot be smaller than 1 and has to be numeric!", InfoType::ERROR);
+    return new Response($error->getJSON(), $error->getCode());
+  }
+
+  if(isset($id) && is_numeric($id))
+  {
+    return new Response($dbHelper->getJobs($limit, $id), 200);
+  }
+  else
+  {
+    $error = new Info(400, "Id has to be numeric!", InfoType::ERROR);
+    return new Response($error->getJSON(), $error->getCode());
+  }
+});
+
 $app->run();

@@ -134,15 +134,17 @@ FROM upload, folderlist, folder, pfile
   {
     if($id == NULL)
     {
-      $jobSQL = "SELECT job_pk, job_queued, job_name, job_upload_fk, job_user_fk, job_group_fk FROM job ";
-      if($limit > 0)
-      {
-        $jobSQL .= "LIMIT " . pg_escape_string($limit);
-      }
+      $jobSQL = "SELECT job_pk, job_queued, job_name, job_upload_fk, job_user_fk, job_group_fk FROM job";
     }
     else
     {
-      $jobSQL = "SELECT job_pk, job_queued, job_name, job_upload_fk, job_user_fk, job_group_fk FROM job";
+      $jobSQL = "SELECT job_pk, job_queued, job_name, job_upload_fk, job_user_fk, job_group_fk 
+                FROM job WHERE job_pk=". pg_escape_string($id);
+    }
+
+    if($limit > 0)
+    {
+      $jobSQL .= " LIMIT " . pg_escape_string($limit);
     }
 
     $result = pg_query($this->getPGCONN(), $jobSQL);
