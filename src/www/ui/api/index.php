@@ -5,6 +5,7 @@ require_once "models/InfoType.php";
 require_once "models/Info.php";
 require_once "helper/DbHelper.php";
 require_once "/usr/local/share/fossology/www/ui/search-helper.php";
+require_once "/usr/local/share/fossology/lib/php/common.php";
 
 //TODO: REMOVE ERROR_DISPLAY
 use Symfony\Component\HttpKernel\Debug\ErrorHandler;
@@ -35,7 +36,7 @@ $app->GET('/repo/api/v1/organize/uploads/{id}', function (Application $app, Requ
     //get the id from the fossology user
     if (is_numeric($id))
     {
-      if($dbHelper->doesUploadIdExist($id))
+      if($dbHelper->doesIdExist("upload","upload_pk", $id))
       {
         return new Response($dbHelper->getUploads($restHelper->getUserId(), $id));
       }
@@ -136,7 +137,7 @@ $app->DELETE('/repo/api/v1/organize/uploads/{id}', function (Application $app, R
   {
     if (is_integer($id))
     {
-      if ($dbHelper->doesUploadIdExist($id))
+      if($dbHelper->doesIdExist("upload","upload_pk", $id))
       {
         TryToDelete($id, $restHelper->getUserId(), $restHelper->getGroupId(), $restHelper->getUploadDao());
         $info = new Info(202, "Delete Job for file with id " . $id, InfoType::INFO);
@@ -255,7 +256,7 @@ $app->GET('/repo/api/v1/admin/users/{id}', function(Application $app, Request $r
   {
     if(is_numeric($id))
     {
-      if($dbHelper->doesUserIdExist($id))
+      if($dbHelper->doesIdExist("users","user_pk", $id))
       {
         $users = $dbHelper->getUsers($id);
         return new Response($users, 200);
@@ -292,7 +293,7 @@ $app->DELETE('/repo/api/v1/admin/users/{id}', function(Application $app, Request
   {
     if(is_numeric($id))
     {
-      if($dbHelper->doesUserIdExist($id))
+      if($dbHelper->doesIdExist("users","user_pk", $id))
       {
         $dbHelper->deleteUser($id);
         $info = new Info(202, "User will be deleted", InfoType::INFO);
@@ -345,7 +346,15 @@ $app->GET('/repo/api/v1/jobs/{id}', function(Application $app, Request $request,
 
   if(isset($id) && is_numeric($id))
   {
-    return new Response($dbHelper->getJobs($limit, $id), 200);
+    if($dbHelper->doesIdExist("job", "job_pk", $id))
+    {
+      return new Response($dbHelper->getJobs($limit, $id), 200);
+    }
+    else
+    {
+      $error = new Info(404, "Job id ".$id." doesn't exist", InfoType::ERROR);
+      return new Response($error->getJSON(), $error->getCode());
+    }
   }
   else
   {

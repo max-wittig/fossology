@@ -3,9 +3,9 @@
 
 namespace www\ui\api\helper;
 
-require_once "/usr/local/share/fossology/www/ui/api/models/Upload.php";
-require_once "/usr/local/share/fossology/www/ui/api/models/User.php";
-require_once "/usr/local/share/fossology/www/ui/api/models/Job.php";
+require_once dirname(dirname(dirname(__FILE__))) . "/api/models/Upload.php";
+require_once dirname(dirname(dirname(__FILE__))) . "/api/models/User.php";
+require_once dirname(dirname(dirname(__FILE__))) . "/api/models/Job.php";
 
 use api\models\Info;
 use Fossology\Lib\Db\ModernDbManager;
@@ -89,14 +89,9 @@ FROM upload, folderlist, folder, pfile
     return json_encode($uploads, JSON_PRETTY_PRINT);
   }
 
-  public function doesUploadIdExist($id)
+  public function doesIdExist($tableName, $idRowName, $id)
   {
-    return (0 < (intval($this->getDbManager()->getSingleRow("SELECT COUNT(*) FROM upload WHERE upload_pk= ".pg_escape_string($id))["count"])));
-  }
-
-  public function doesUserIdExist($id)
-  {
-    return (0 < (intval($this->getDbManager()->getSingleRow("SELECT COUNT(*) FROM users WHERE user_pk= ".pg_escape_string($id))["count"])));
+    return (0 < (intval($this->getDbManager()->getSingleRow("SELECT COUNT(*) FROM $tableName WHERE $idRowName= ".pg_escape_string($id))["count"])));
   }
 
   public function deleteUser($id)

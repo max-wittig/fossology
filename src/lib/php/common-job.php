@@ -1,6 +1,6 @@
 <?php
 
-require_once '/usr/local/share/fossology/www/ui/api/helper/DbHelper.php';
+require_once dirname(dirname(dirname(__FILE__))) . "/www/ui/api/helper/DbHelper.php";
 require_once 'common-db.php';
 
 use Fossology\Lib\Auth\Auth;
