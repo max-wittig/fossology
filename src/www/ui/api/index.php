@@ -43,7 +43,7 @@ $app['debug'] = true;
 
 ////////////////////////////UPLOADS/////////////////////
 
-$app->GET('/repo/api/v1/organize/uploads/{id}', function (Application $app, Request $request, $id)
+$app->GET('/repo/api/v1/uploads/{id}', function (Application $app, Request $request, $id)
 {
   $restHelper = new RestHelper();
   $dbHelper = new DbHelper();
@@ -77,7 +77,7 @@ $app->GET('/repo/api/v1/organize/uploads/{id}', function (Application $app, Requ
   }
 });
 
-$app->PATCH('/repo/api/v1/organize/uploads/{id}', function (Application $app, Request $request, $id)
+$app->PATCH('/repo/api/v1/uploads/{id}', function (Application $app, Request $request, $id)
 {
   $restHelper = new RestHelper();
 
@@ -102,7 +102,7 @@ $app->PATCH('/repo/api/v1/organize/uploads/{id}', function (Application $app, Re
 
 });
 
-$app->PUT('/repo/api/v1/organize/uploads/', function (Application $app, Request $request)
+$app->PUT('/repo/api/v1/uploads/', function (Application $app, Request $request)
 {
 
   $restHelper = new RestHelper();
@@ -128,7 +128,7 @@ $app->PUT('/repo/api/v1/organize/uploads/', function (Application $app, Request 
   }
 });
 
-$app->GET('/repo/api/v1/organize/uploads/', function (Application $app, Request $request)
+$app->GET('/repo/api/v1/uploads/', function (Application $app, Request $request)
 {
   $restHelper = new RestHelper();
   $dbHelper = new DbHelper();
@@ -145,7 +145,7 @@ $app->GET('/repo/api/v1/organize/uploads/', function (Application $app, Request 
   }
 });
 
-$app->DELETE('/repo/api/v1/organize/uploads/{id}', function (Application $app, Request $request, $id)
+$app->DELETE('/repo/api/v1/uploads/{id}', function (Application $app, Request $request, $id)
 {
   require_once "../../../delagent/ui/delete-helper.php";
   $restHelper = new RestHelper();

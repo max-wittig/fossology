@@ -33,7 +33,7 @@ security:
 produces:
   - application/json
 paths:
-  /organize/uploads/{id}:
+  /uploads/{id}:
     get:
       tags:
         - Upload
@@ -177,7 +177,7 @@ paths:
           schema:
             $ref: '#/definitions/Info'
 
-  /organize/uploads:
+  uploads:
     get:
       tags:
         - Upload
