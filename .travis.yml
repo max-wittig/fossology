@@ -38,7 +38,7 @@ before_script:
  - cd src/
  - composer install --dev
  - cd ..
- - sudo utils/fo-installdeps
+ - sudo utils/fo-installdeps -y
  - install/scripts/install-spdx-tools.sh
  - install/scripts/install-ninka.sh
  - psql -c "CREATE USER fossy WITH PASSWORD 'fossy' CREATEDB;" -U postgres
