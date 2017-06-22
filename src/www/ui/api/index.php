@@ -24,6 +24,7 @@ require_once "models/Info.php";
 require_once "helper/DbHelper.php";
 require_once "/usr/local/share/fossology/www/ui/search-helper.php";
 require_once "/usr/local/share/fossology/lib/php/common.php";
+require_once "/usr/local/share/fossology/www/ui/page/upload-helper.php";
 
 //TODO: REMOVE ERROR_DISPLAY
 ini_set('display_errors', 1);
@@ -32,6 +33,7 @@ error_reporting(-1);
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Silex\Application;
+use Fossology\Lib\UI\MenuHook;
 use api\models\Info;
 use \www\ui\api\models\InfoType;
 use \www\ui\api\helper\DbHelper;
@@ -97,6 +99,11 @@ $app->PATCH('/repo/api/v1/uploads/{id}', function (Application $app, Request $re
     $error = new Info(403, "No authorized to PATCH upload with id " . $id, InfoType::ERROR);
     return new Response($error->getJSON(), $error->getCode());
   }
+
+});
+
+$app->POST('/repo/api/v1/uploads/', function (Application $app, Request $request)
+{
 
 });
 

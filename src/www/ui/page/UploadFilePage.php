@@ -21,10 +21,10 @@ namespace Fossology\UI\Page;
 
 use Fossology\UI\Page\UploadPageBase;
 use Fossology\Lib\Auth\Auth;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Fossology\Lib\UI\MenuHook;
 
 /**
  * \brief Upload a file from the users computer using the UI.
@@ -120,42 +120,14 @@ class UploadFilePage extends UploadPageBase
     $uploadMode = (1 << 3); // code for "it came from web upload"
     $userId = Auth::getUserId();
     $groupId = Auth::getGroupId();
-
-    $uploadId = JobAddUpload($userId, $groupId, $originalFileName, $originalFileName, $description, $uploadMode, $folderId, $publicPermission);
-    file_put_contents("/home/uawet3g4/test/filename.txt",json_encode($originalFileName));
-    file_put_contents("/home/uawet3g4/test/request.txt",json_encode($request));
-    if (empty($uploadId))
-    {
-      return array(false, _("Failed to insert upload record"), $description);
-    }
-
-    try
-    {
-      $uploadedTempFile = $uploadedFile->move($uploadedFile->getPath(), $uploadedFile->getFilename() . '-uploaded')->getPathname();
-    } catch (FileException $e)
-    {
-      return array(false, _("Could not save uploaded file"), $description);
-    }
-
     $projectGroup = $GLOBALS['SysConf']['DIRECTORIES']['PROJECTGROUP'] ?: 'fossy';
-    $wgetAgentCall = "$MODDIR/wget_agent/agent/wget_agent -C -g $projectGroup -k $uploadId '$uploadedTempFile' -c '$SYSCONFDIR'";
-    $wgetOutput = array();
-    exec($wgetAgentCall, $wgetOutput, $wgetReturnValue);
-    unlink($uploadedTempFile);
+    $adj2nestplugin = \plugin_find('agent_adj2nest');
+    $parmAgentList = MenuHook::getAgentPluginNames("ParmAgents");
+    $plainAgentList = MenuHook::getAgentPluginNames("Agents");
 
-    if ($wgetReturnValue != 0)
-    {
-      $message = implode(' ', $wgetOutput);
-      if (empty($message))
-      {
-        $message = _("File upload failed.  Error:") . $wgetReturnValue;
-      }
-      return array(false, $message, $description);
-    }
 
-    $message = $this->postUploadAddJobs($request, $originalFileName, $uploadId);
-
-    return array(true, $message, $description);
+    return uploadFile($parmAgentList, $plainAgentList, $adj2nestplugin, $request, $projectGroup, $SYSCONFDIR, $MODDIR, $uploadMode, $uploadedFile, $originalFileName, $description,
+      $publicPermission, $folderId,$userId, $groupId);
   }
 
 }

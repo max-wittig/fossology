@@ -21,7 +21,6 @@ namespace Fossology\UI\Page;
 use Fossology\Lib\Auth\Auth;
 use Fossology\Lib\Dao\FolderDao;
 use Fossology\Lib\Dao\UploadDao;
-use Fossology\Lib\Plugin\AgentPlugin;
 use Fossology\Lib\Plugin\DefaultPlugin;
 use Fossology\Lib\UI\MenuHook;
 use Monolog\Logger;
@@ -102,46 +101,6 @@ abstract class UploadPageBase extends DefaultPlugin
       $vars['agentCheckBoxMake'] = AgentCheckBoxMake(-1, $skip);
     }
     return $this->handleView($request, $vars);
-  }
-  
-  protected function postUploadAddJobs(Request $request, $fileName, $uploadId, $jobId = null, $wgetDependency = false)
-  {
-    $userId = Auth::getUserId();
-    $groupId = Auth::getGroupId();
-
-    if ($jobId === null) {
-      $jobId = JobAddJob($userId, $groupId, $fileName, $uploadId);
-    }
-    $dummy = "";
-    $adj2nestDependencies = array();
-    if ($wgetDependency)
-    {
-      $adj2nestDependencies = array(array('name'=>'agent_unpack',AgentPlugin::PRE_JOB_QUEUE=>array('wget_agent')));
-    }
-    $adj2nestplugin = \plugin_find('agent_adj2nest');
-    $adj2nestplugin->AgentAdd($jobId, $uploadId, $dummy, $adj2nestDependencies);
-
-    $checkedAgents = checkedAgents();
-    AgentSchedule($jobId, $uploadId, $checkedAgents);
-
-    $errorMsg = '';
-    $parmAgentList = MenuHook::getAgentPluginNames("ParmAgents");
-    $plainAgentList = MenuHook::getAgentPluginNames("Agents");
-    $agentList = array_merge($plainAgentList, $parmAgentList);
-    foreach($parmAgentList as $parmAgent) {
-      $agent = plugin_find($parmAgent);
-      $agent->scheduleAgent($jobId, $uploadId, $errorMsg, $request, $agentList);
-    }
-    
-    $status = GetRunnableJobList();
-    $message = empty($status) ? _("Is the scheduler running? ") : "";
-    $jobUrl = Traceback_uri() . "?mod=showjobs&upload=$uploadId";
-    $message .= _("The file") . " " . $fileName . " " . _("has been uploaded. It is") . ' <a href=' . $jobUrl . '>upload #' . $uploadId . "</a>.\n";
-    if ($request->get('public')==self::PUBLIC_GROUPS)
-    {
-      $this->getObject('dao.upload.permission')->makeAccessibleToAllGroupsOf($uploadId, $userId);
-    }
-    return $message;
   }
 
   /**
