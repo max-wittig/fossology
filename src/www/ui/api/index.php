@@ -26,10 +26,8 @@ require_once "/usr/local/share/fossology/www/ui/search-helper.php";
 require_once "/usr/local/share/fossology/lib/php/common.php";
 
 //TODO: REMOVE ERROR_DISPLAY
-use Symfony\Component\HttpKernel\Debug\ErrorHandler;
 ini_set('display_errors', 1);
 error_reporting(-1);
-ErrorHandler::register();
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
