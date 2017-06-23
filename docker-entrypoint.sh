@@ -8,6 +8,7 @@
 # without any warranty.
 #
 # Description: startup helper script for the FOSSology Docker container
+set -e
 
 db_host="localhost"
 db_name="fossology"
