@@ -20,3 +20,4 @@ sleep 15
 
 #### is fossology reachable? --> check title
 #curl -L -s http://172.18.0.22/repo/ | grep "<title>Getting Started with FOSSology</title>"
+curl -L -s http://172.18.0.22/repo/
