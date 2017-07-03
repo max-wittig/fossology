@@ -16,7 +16,7 @@ OPTS=`getopt -o adwseolch --long agent,database,web-only,scheduler-only,everythi
 
 if [ $? != 0 ]; then
    echo "ERROR: Bad option specified."
-   OPTS="--help"
+   OPTS="--help"   
 fi
 
 eval set -- "$OPTS"
