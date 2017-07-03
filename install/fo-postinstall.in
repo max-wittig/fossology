@@ -21,7 +21,7 @@ fi
 
 eval set -- "$OPTS"
 
-# if no options or just  -o then do everything
+# if no options or just  - o then do everything
 if [ "$OPTS" = " --" -o "$OPTS" = " -o --" ]; then
    EVERYTHING=1
 fi
