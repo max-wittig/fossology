@@ -83,3 +83,17 @@ function sortList(selector)
         $(o).text(arr[i].t);
     });
 }
+
+function insertLicenseTable(licenseTableJSON) {
+    $('#adminLicenseTable').DataTable({
+      //base64 decode
+      data: JSON.parse(atob(licenseTableJSON)),
+      deferRender: true,
+      responsive: true,
+      scroller: true
+    });
+}
+
+function urldecode(url) {
+  return decodeURIComponent(url.replace(/\+/g, ' '));
+}

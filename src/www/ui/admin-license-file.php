@@ -57,6 +57,9 @@ class admin_license_file extends FO_Plugin
   public function Output()
   {
     $V = ""; // menu_to_1html(menu_find($this->Name, $MenuDepth),0);
+    $V .= '<script src="scripts/jquery-3.2.0.min.js"></script>';
+    $V .= '<script src="scripts/jquery.dataTables.min.js"></script>';
+    $V .= '<script src="scripts/tools.js"></script>';
     $errorstr = "License not added";
     
     // update the db
@@ -82,7 +85,7 @@ class admin_license_file extends FO_Plugin
     // Add new rec to db
     if (@$_POST["addit"])
     {
-      $resultstr = $this->Adddb($_POST);
+      $resultstr = $this->Adddb();
       $V .= $resultstr;
       if (strstr($resultstr, $errorstr)) {
         $V .= $this->Updatefm(0);
@@ -103,8 +106,9 @@ class admin_license_file extends FO_Plugin
 
     $V .= $this->Inputfm();
     if (@$_POST["req_shortname"])
+    {
       $V .= $this->LicenseList($_POST["req_shortname"], $_POST["req_marydone"]);
-
+    }
     return $V;
   }
 
@@ -122,7 +126,7 @@ class admin_license_file extends FO_Plugin
     // all are optional
     $V.= "<p>";
     $V.= _("Filter: ");
-    $V.= "<SELECT name='req_marydone'>\n";
+    $V.= "<select name='req_marydone'>\n";
     $Selected =  (@$_REQUEST['req_marydone'] == 'all') ? " SELECTED ": "";
     $text = _("All");
     $V.= "<option value='all' $Selected> $text </option>";
@@ -132,7 +136,7 @@ class admin_license_file extends FO_Plugin
     $Selected =  (@$_REQUEST['req_marydone'] == 'notdone') ? " SELECTED ": "";
     $text = _("Not Checked");
     $V.= "<option value='notdone' $Selected> $text </option>";
-    $V.= "</SELECT>";
+    $V.= "</select>";
     $V.= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 
     // by short name -ajax-> fullname
@@ -202,60 +206,49 @@ class admin_license_file extends FO_Plugin
     $ob .= pg_num_rows($result) . " license$plural found.";
 
     //$ob .= "<table style='border: thin dotted gray'>";
-    $ob .= "<table rules='rows' cellpadding='3'>";
-    $ob .= "<tr>";
-    $text = _("Edit");
-    $ob .= "<th>$text</th>";
-    $text = _("Checked");
-    $ob .= "<th>$text</th>";
-    $text = _("Active");
-    $ob .= "<th>$text</th>";
-    $text = _("SPDX Compatible");
-    $ob .= "<th>$text</th>";
-    $text = _("Shortname");
-    $ob .= "<th>$text</th>";
-    $text = _("Fullname");
-    $ob .= "<th>$text</th>";
-    $text = _("Text");
-    $ob .= "<th>$text</th>";
-    $text = _("URL");
-    $ob .= "<th>$text</th>";
-    $ob .= "</tr>";
-    $lineno = 0;
+    $ob .= "<table id='adminLicenseTable' rules='rows' width='100%' cellpadding='3'>";
+    $ob .= "<thead>
+              <tr>
+                <th>Edit</th>
+                <th>Checked</th>
+                <th>SPDX Compatible</th>
+                <th>Shortname</th>
+                <th>Fullname</th>
+                <th>Text</th>
+                <th>URL</th>
+              </tr>
+           </thead>";
+    $ob .= "</table>";
+    $tableBodyData = [];
+
     while ($row = pg_fetch_assoc($result))
     {
-      if ($lineno++ % 2)
-        $style = "style='background-color:lavender'";
-      else
-        $style = "";
-      $ob .= "<tr $style>";
-
-      // Edit button brings up full screen edit of all license_ref fields
-      $ob .= "<td align=center><a href='";
-      $ob .= Traceback_uri();
-      $ob .= "?mod=" . $this->Name .
-           "&rf_pk=$row[rf_pk]".
-           "&req_marydone=$_REQUEST[req_marydone]&req_shortname=$_REQUEST[req_shortname]' >".
-           "<img border=0 src='" . Traceback_uri() . "images/button_edit.png'></a></td>";
-
       $marydone = ($row['marydone'] == 't') ? "Yes" : "No";
-      $text = _("$marydone");
-      $ob .= "<td align=center>$text</td>";
-      $rf_active = ($row['rf_active'] == 't') ? "Yes" : "No";
-      $text = _("$rf_active");
-      $ob .= "<td align=center>$text</td>";
+
+
       $rf_spdx_compatible = ($row['rf_spdx_compatible'] == 't') ? "Yes" : "No";
-      $text = _("$rf_spdx_compatible");
-      $ob .= "<td align=center>$text</td>";
-      $ob .= "<td align=center>$row[rf_shortname]</td>";
-      $ob .= "<td align=left>$row[rf_fullname]</td>";
-      $vetext = htmlspecialchars($row['rf_text']);
-      $ob .= "<td><textarea readonly=readonly rows=3 cols=40>$vetext</textarea></td> ";
-      $ob .= "<td align=left>$row[rf_url]</td>";
-      $ob .= "</tr>";
+      $vetext = $row['rf_text'];
+      $row = array(
+        "<td align=center><a href='".Traceback_uri() . "?mod=" . $this->Name .
+          "&rf_pk=$row[rf_pk]&req_marydone=$_REQUEST[req_marydone]&req_shortname=$_REQUEST[req_shortname]' >".
+          "<img border=0 src='" . Traceback_uri() . "images/button_edit.png'></a></td>",
+        $marydone,
+        $rf_spdx_compatible,
+        "$row[rf_shortname]",
+        "$row[rf_fullname]",
+        "<textarea readonly rows='3' cols='40'>$vetext</textarea>",
+        "$row[rf_url]"
+      );
+
+      $tableBodyData[] = $row;
     }
+
+    $ob .= "
+    <script>
+     var licenseTable = '" . base64_encode(json_encode(($tableBodyData))) . "';
+     insertLicenseTable(licenseTable);
+    </script>";
     pg_free_result($result);
-    $ob .= "</table>";
     return $ob;
   }
 
